@@ -41,6 +41,7 @@ section[id] {
   background: var(--bg-solar);
   padding-top: 3vw;
   padding: clamp(48px, 2.2vw, 80px) 0 0;
+  padding-bottom: 40px;
 }
 
 .grid-hero-solar-system {
@@ -331,6 +332,10 @@ section[id] {
 .hero-band-solar-system {
   display: none !important;
 }
+.hero-right-solar-system reveal-solar-system{
+  padding-bottom: 40px;
+
+}
 
 /* ===== Desktop/Large: create the overlap ===== */
 @media (min-width: 961px) {
@@ -574,6 +579,7 @@ body {
 .section-about-lv-electrical-about- {
   background: #fff;
   padding: clamp(36px, 2.6vw, 70px) 0;
+  /* padding-top: -40px; */
 }
 
 .container-lv-electrical-about- {
@@ -2124,11 +2130,6 @@ body.modal-open {
   font-weight: bold;
 }
 
-/* Main content wrapper */
-.-gemini-content-wrapper {
-  overflow: hidden;
-  position: relative;
-}
 
 /* Individual content blocks (hidden by default) */
 .-gemini-content {
@@ -2446,11 +2447,7 @@ body.modal-open {
   font-weight: 600;
 }
 
-/* Main content wrapper */
-.-gemini-content-wrapper {
-  overflow: hidden;
-  position: relative;
-}
+
 
 /* Content blocks (default hidden) */
 .-gemini-content {
@@ -2547,10 +2544,131 @@ body.modal-open {
   font-weight: 600;
 }
 
+
+/* Content blocks (default hidden) */
+.-gemini-content {
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  align-items: center;
+}
+
+/* Active content block (visible) */
+.-gemini-content.active {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (min-width: 768px) {
+  .-gemini-content.active {
+    flex-direction: row;
+  }
+}
+
+/* Text + image columns */
+.-gemini-text-content,
+.-gemini-image-content {
+  flex: 1;
+}
+
+/* Headings in this section – keep same style as about section title style */
+.-gemini-text-content h2 {
+  font-size: 48px;
+  color: #0d2847;
+  margin-bottom: 20px;
+}
+
+/* UPDATED: paragraph style to match "about us" paragraph */
+.-gemini-text-content p {
+  font: 400 15px/1.7 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #6a7a89;
+  margin: 0;
+}
+
+/* Image block */
+.-gemini-image-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.-gemini-image-content img {
+  width: 100%;
+  max-width: 480px;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .grid-solutions-solar-system-solution {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .solutions-head-solar-system-solution {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .solutions-viewall-btn-solar-system-solution {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 560px) {
+  .grid-solutions-solar-system-solution {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Container for the entire section */
+.-gemini-mission-section {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Tab buttons container */
+.-gemini-tabs-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 50px;
+  padding: 5px;
+  width: fit-content;
+}
+
+/* Individual tab button styling */
+.-gemini-tab {
+  background-color: transparent;
+  border: none;
+  padding: 12px 24px;
+  margin: 0 4px;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* Active (selected) tab state */
+.-gemini-tab.active {
+  background-color: #e0e0e0;
+  color: #000;
+  font-weight: 600;
+}
+
 /* Main content wrapper */
 .-gemini-content-wrapper {
   overflow: hidden;
   position: relative;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 /* Content blocks (default hidden) */
@@ -2610,4 +2728,108 @@ body.modal-open {
   max-width: 480px;
   height: auto;
   border-radius: 8px;
+}
+
+/* show only 2 cards when collapsed */
+#solutions-grid-solar-system-solution.is-collapsed-solar-system-solution .card-solar-system-solution:nth-of-type(3) {
+  display: none;
+}
+
+/* center the "View LV Switchboards" button */
+.solutions-viewall-btn-solar-system-solution {
+  justify-self: center;
+  margin-top: 1.25rem;
+}
+
+/* make list items real bullets inside cards */
+.card-points-solar-system-solution {
+  list-style: disc;
+  padding-left: 1.3rem;
+}
+
+
+
+
+
+.container-lv-electrical-process {
+  width: 100%;
+  max-width: 1100px;
+  margin-inline: auto;
+  /* padding-inline: clamp(16px, 1vw, 28px); */
+}
+
+/* === MOBILE LAYOUT: stack image + copy on top, timeline below === */
+@media (max-width: 768px) {
+  /* one column stack */
+  .grid-lv-electrical-process {
+    grid-template-columns: 1fr;
+  }
+
+  /* add a bit of space between image block and timeline */
+  .timeline-lv-electrical-process {
+    margin-top: 24px;
+  }
+
+  /* keep timeline aligned nicely on small screens */
+  .timeline-list-lv-electrical-process::before {
+    left: 28px;
+  }
+
+  .timeline-item-lv-electrical-process {
+    grid-template-columns: 44px 1fr;
+  }
+}
+/* === MOBILE PADDING FIX (20px all around) === */
+@media (max-width: 768px) {
+  .section-process-lv-electrical-process {
+    padding: 20px !important;
+  }
+
+  .container-lv-electrical-process {
+    padding: 20px !important;
+  }
+
+  .intro-lv-electrical-process,
+  .timeline-lv-electrical-process {
+    padding: 0 0; /* keep inner spacing controlled */
+  }
+}
+/* ===== MOBILE TWEAKS FOR PROJECT CARDS ===== */
+@media (max-width: 640px) {
+
+  /* Let the section span full width on phones */
+  .lv-electric-panel-project {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* Container fills the viewport with small, even padding */
+  .lv-epp-container {
+    max-width: none;
+    margin: 0;
+    padding-inline: 12px;  /* equal left/right gutter */
+  }
+
+  /* One card per row, full width */
+  .lv-epp-grid {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .lv-epp-card {
+    width: 100%;
+    margin-inline: 0;      /* no extra space on the right */
+  }
+
+  /* Make sure the media fills the card width with no inner gap */
+  .lv-epp-media {
+    width: 100%;
+  }
+
+  .lv-epp-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 }
