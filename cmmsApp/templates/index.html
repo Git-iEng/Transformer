@@ -17,6 +17,7 @@
     })(window, document, 'script', 'dataLayer', 'GTM-TKQV8LKX');</script>
   <!-- End Google Tag Manager -->
   <!--=============== CSS ===============-->
+  <meta name="description" content="Transformer supply and services across Australia and Oceania, covering distribution, power, oil-filled, and dry-type transformers for utilities.">
   <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <link rel="stylesheet" href="{% static 'css/neplan-about.css' %}">
   <link rel="stylesheet" href="{% static 'css/consult-block.css' %}">
@@ -726,41 +727,6 @@
       document.querySelectorAll(SELECTOR).forEach(el => io.observe(el));
     })();</script>
 
-
-
-
-  <script>(() => {
-      const SELECTOR = '.reveal-left, .reveal-right, .reveal-up, .reveal-down';
-
-      // Apply per-element delay from data attribute if provided
-      document.querySelectorAll(SELECTOR).forEach(el => {
-        const d = el.getAttribute('data-reveal-delay');
-        if (d) el.style.setProperty('--reveal-delay', /^\d+$/.test(d) ? `${d}ms` : d);
-      });
-
-      // Auto-stagger children inside a .reveal-group
-      document.querySelectorAll('.reveal-group[data-reveal-stagger]').forEach(group => {
-        const step = parseInt(group.dataset.revealStagger, 10) || 120; // ms
-        let i = 0;
-        group.querySelectorAll(SELECTOR).forEach(el => {
-          el.style.setProperty('--reveal-delay', `${i * step}ms`);
-          i++;
-        });
-      });
-
-      // Observe and toggle visibility (replays when scrolling back unless .reveal-once)
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(({ target, isIntersecting }) => {
-          if (isIntersecting) target.classList.add('is-visible');
-          else if (!target.classList.contains('reveal-once'))
-            target.classList.remove('is-visible');
-        });
-      }, { threshold: 0.18 });
-
-      document.querySelectorAll(SELECTOR).forEach(el => io.observe(el));
-    })();</script>
-  <script defer src="{% static 'js/neplan.js'%}"></script>
-  <script src="{% static 'js/main.js'%}"></script>
   
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TKQV8LKX" height="0" width="0"
