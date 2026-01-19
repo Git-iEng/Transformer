@@ -347,6 +347,14 @@ function validate() {
   return true; // all good
 }
 
+let submitting = false;
+
+form.addEventListener("submit", (e) => {
+  if (submitting) { e.preventDefault(); return; }
+  if (!validate()) { e.preventDefault(); return; }
+  submitting = true;
+  setLoading(true);
+});
 
   // loading
   function setLoading(is) {
@@ -359,7 +367,11 @@ function validate() {
     setLoading(true); // server redirects on success
   });
 })();
-
+// If user returns to the page (back button / bfcache), reset button state
+window.addEventListener("pageshow", () => {
+  submitting = false;
+  setLoading(false);
+});
 function showToast(msg, type='error', timeoutMs=4000){
   const root = document.getElementById('cmmsToastRoot'); if(!root) return;
   const el = document.createElement('div');

@@ -90,19 +90,22 @@ def _send_email(subject: str, text_body: str, html_body: str | None, recipients:
 
 
 def _send_demo_email_async(subject: str, text_body: str, html_body: str | None = None):
-    """Fire-and-forget email for Request Demo."""
     recipients = getattr(settings, "DEMO_RECIPIENTS", None) or getattr(settings, "CONTACT_RECIPIENTS", None)
-    Thread(target=_send_email, args=(subject, text_body, html_body, recipients), daemon=True).start()
-
+    _send_email(subject, text_body, html_body, recipients)
 
 def _send_contact_email_async(subject: str, text_body: str, html_body: str | None = None):
     """Fire-and-forget email for Contact form."""
     recipients = getattr(settings, "CONTACT_RECIPIENTS", None)
     Thread(target=_send_email, args=(subject, text_body, html_body, recipients), daemon=True).start()
-
 def request_demo_view(request):
     if request.method != "POST":
         return redirect("/")
+
+    # detect ajax/fetch
+    wants_json = (
+        request.headers.get("x-requested-with") == "XMLHttpRequest"
+        or "application/json" in (request.headers.get("accept") or "")
+    )
 
     full_name = request.POST.get("full_name", "").strip()
     company   = request.POST.get("company", "").strip()
@@ -127,6 +130,11 @@ def request_demo_view(request):
         errors["country"] = "Select a country."
 
     if errors:
+        # JSON mode: return errors to JS
+        if wants_json:
+            return JsonResponse({"ok": False, "errors": errors}, status=400)
+
+        # normal mode: use messages + redirect back
         for msg in errors.values():
             messages.error(request, msg)
         return redirect(request.META.get("HTTP_REFERER", "/"))
@@ -134,9 +142,9 @@ def request_demo_view(request):
     country_code, dial = (country.split("|", 1) + [""])[:2]
 
     ts = timezone.now().strftime("%Y-%m-%d %H:%M:%S %Z")
-    subject = "New CARL Demo Request"
+    subject = "New Transformer inquiry"
     text_body = (
-        "A new CARL demo request was submitted.\n\n"
+        "A new Transformer inquiry request was submitted.\n\n"
         f"Submitted: {ts}\n"
         f"IP: {request.META.get('REMOTE_ADDR','')}\n\n"
         f"Full name: {full_name}\n"
@@ -150,7 +158,7 @@ def request_demo_view(request):
     )
 
     html_body = f"""
-        <h2 style="margin:0 0 8px">New CARL Demo Request</h2>
+        <h2 style="margin:0 0 8px">New Transformer Inquiry Request</h2>
         <p style="margin:0 0 12px;color:#334">Submitted {ts} from {request.META.get('REMOTE_ADDR','')}</p>
         <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:#f9fbfc">
           <tr><td><b>Full name</b></td><td>{full_name}</td></tr>
@@ -164,10 +172,17 @@ def request_demo_view(request):
         <pre style="white-space:pre-wrap;font-family:system-ui,Segoe UI,Arial,sans-serif">{message or '(none)'}</pre>
     """
 
+    # send email (sync call but it returns quickly since you call the thread sender)
     _send_demo_email_async(subject, text_body, html_body)
 
-    return redirect(reverse("cmmsApp:contact_thanks"))
+    thanks_url = reverse("cmmsApp:contact_thanks")
 
+    # JSON mode: JS will redirect only when ok=true
+    if wants_json:
+        return JsonResponse({"ok": True, "redirect": thanks_url})
+
+    # normal mode
+    return redirect(thanks_url)
 
 def home(request):
     return render(request, "index.html")
@@ -222,10 +237,10 @@ def contact_section(request):
         # )
 
         # Email body
-        subject = "New website contact submission for CARL Software"
+        subject = "New website contact submission for Transformer Inquiry"
         text_body = "\n".join(
             [
-                "New contact submission for CARL Software:",
+                "New contact submission for Transformer Inquiry:",
                 f"Name: {cd['first_name']} {cd.get('last_name','')}".strip(),
                 f"Company: {cd.get('company','')}",
                 f"Email: {cd['email']}",
