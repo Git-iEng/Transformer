@@ -268,6 +268,7 @@ const COUNTRIES = [
   const clearErr = () => {
     form.querySelectorAll(".error").forEach(e => (e.textContent = ""));
     form.querySelectorAll(".is-error").forEach(el => el.classList.remove("is-error"));
+    form.querySelectorAll("[aria-invalid='true']").forEach(el => el.removeAttribute("aria-invalid"));
   };
 
   // ---------------- country helpers ----------------
@@ -375,32 +376,56 @@ const COUNTRIES = [
 
     return true;
   }
+  // ---------------- SINGLE submit handler (AJAX) ----------------
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault(); // IMPORTANT: stop normal POST
 
-  // ---------------- SINGLE submit handler (important) ----------------
-  form.addEventListener("submit", (e) => {
-    // IMPORTANT: this is a normal POST submit; we just manage UX safely
-    if (submitting) {
-      e.preventDefault();
-      return;
-    }
+    if (submitting) return;
 
     if (!validate()) {
-      e.preventDefault();
-      resetSubmitState(); // stop spinner if validation fails
+      resetSubmitState();
       return;
     }
 
     submitting = true;
     setLoading(true);
 
-    // Safety: if something prevents navigation (server error, blocked redirect),
-    // stop spinner after 12 seconds so user is not stuck.
-    window.setTimeout(() => {
-      if (submitting) {
+    try {
+      const formData = new FormData(form);
+
+      const res = await fetch(form.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        credentials: "same-origin"
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        // show field errors if provided by server
+        const errors = data.errors || {};
+        Object.keys(errors).forEach((k) => err(k, errors[k]));
+        showToast("Please fix the errors and try again.", "error");
         resetSubmitState();
-        showToast("If the form submitted but you are still on this page, please refresh and try again.", "error", 6000);
+        return;
       }
-    }, 12000);
+
+      // Success: close modal, reset form, then redirect
+      form.reset();
+      clearErr();
+      modal.classList.remove("is-open");
+      resetSubmitState();
+
+      const redirectUrl = data.redirect || (form.querySelector('input[name="next"]')?.value || "/thanks/");
+      window.location.href = redirectUrl;
+
+    } catch (ex) {
+      showToast("Network error. Please try again.", "error");
+      resetSubmitState();
+    }
   });
 
   // Reset when user returns (back button / bfcache)
