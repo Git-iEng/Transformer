@@ -1,480 +1,1258 @@
-/* =========================
-   Demo Modal + Form JS (FULL)
-   Fixes:
-   - Only ONE submit handler (your code had 2, causing double-submit)
-   - Button stays loading while the POST is actually happening
-   - Prevents multiple submits
-   - Resets loading state on back/restore (bfcache)
-   - Robust country <-> phone matching (longest dial match)
-   ========================= */
+/* ==========================================================
+   landing-page-solar-system.js
+   - Scroll reveal (replays on scroll up/down)
+   - Optional: adjust initial hash scroll for fixed header
+   - Optional: smooth scroll for [data-scroll-to] anchors
+   ========================================================== */
 
-const COUNTRIES = [
-  { code: "AF", name: "Afghanistan", dial: "+93" },
-  { code: "AL", name: "Albania", dial: "+355" },
-  { code: "DZ", name: "Algeria", dial: "+213" },
-  { code: "AD", name: "Andorra", dial: "+376" },
-  { code: "AO", name: "Angola", dial: "+244" },
-  { code: "AR", name: "Argentina", dial: "+54" },
-  { code: "AM", name: "Armenia", dial: "+374" },
-  { code: "AU", name: "Australia", dial: "+61" },
-  { code: "AT", name: "Austria", dial: "+43" },
-  { code: "AZ", name: "Azerbaijan", dial: "+994" },
-  { code: "BS", name: "Bahamas", dial: "+1-242" },
-  { code: "BH", name: "Bahrain", dial: "+973" },
-  { code: "BD", name: "Bangladesh", dial: "+880" },
-  { code: "BB", name: "Barbados", dial: "+1-246" },
-  { code: "BY", name: "Belarus", dial: "+375" },
-  { code: "BE", name: "Belgium", dial: "+32" },
-  { code: "BZ", name: "Belize", dial: "+501" },
-  { code: "BJ", name: "Benin", dial: "+229" },
-  { code: "BT", name: "Bhutan", dial: "+975" },
-  { code: "BO", name: "Bolivia", dial: "+591" },
-  { code: "BA", name: "Bosnia and Herzegovina", dial: "+387" },
-  { code: "BW", name: "Botswana", dial: "+267" },
-  { code: "BR", name: "Brazil", dial: "+55" },
-  { code: "BN", name: "Brunei", dial: "+673" },
-  { code: "BG", name: "Bulgaria", dial: "+359" },
-  { code: "BF", name: "Burkina Faso", dial: "+226" },
-  { code: "BI", name: "Burundi", dial: "+257" },
-  { code: "KH", name: "Cambodia", dial: "+855" },
-  { code: "CM", name: "Cameroon", dial: "+237" },
-  { code: "CA", name: "Canada", dial: "+1" },
-  { code: "CV", name: "Cape Verde", dial: "+238" },
-  { code: "CF", name: "Central African Republic", dial: "+236" },
-  { code: "TD", name: "Chad", dial: "+235" },
-  { code: "CL", name: "Chile", dial: "+56" },
-  { code: "CN", name: "China", dial: "+86" },
-  { code: "CO", name: "Colombia", dial: "+57" },
-  { code: "KM", name: "Comoros", dial: "+269" },
-  { code: "CR", name: "Costa Rica", dial: "+506" },
-  { code: "HR", name: "Croatia", dial: "+385" },
-  { code: "CU", name: "Cuba", dial: "+53" },
-  { code: "CY", name: "Cyprus", dial: "+357" },
-  { code: "CZ", name: "Czech Republic", dial: "+420" },
-  { code: "DK", name: "Denmark", dial: "+45" },
-  { code: "DJ", name: "Djibouti", dial: "+253" },
-  { code: "DM", name: "Dominica", dial: "+1-767" },
-  { code: "DO", name: "Dominican Republic", dial: "+1-809" },
-  { code: "EC", name: "Ecuador", dial: "+593" },
-  { code: "EG", name: "Egypt", dial: "+20" },
-  { code: "SV", name: "El Salvador", dial: "+503" },
-  { code: "GQ", name: "Equatorial Guinea", dial: "+240" },
-  { code: "ER", name: "Eritrea", dial: "+291" },
-  { code: "EE", name: "Estonia", dial: "+372" },
-  { code: "SZ", name: "Eswatini", dial: "+268" },
-  { code: "ET", name: "Ethiopia", dial: "+251" },
-  { code: "FJ", name: "Fiji", dial: "+679" },
-  { code: "FI", name: "Finland", dial: "+358" },
-  { code: "FR", name: "France", dial: "+33" },
-  { code: "GA", name: "Gabon", dial: "+241" },
-  { code: "GM", name: "Gambia", dial: "+220" },
-  { code: "GE", name: "Georgia", dial: "+995" },
-  { code: "DE", name: "Germany", dial: "+49" },
-  { code: "GH", name: "Ghana", dial: "+233" },
-  { code: "GR", name: "Greece", dial: "+30" },
-  { code: "GD", name: "Grenada", dial: "+1-473" },
-  { code: "GT", name: "Guatemala", dial: "+502" },
-  { code: "GN", name: "Guinea", dial: "+224" },
-  { code: "GY", name: "Guyana", dial: "+592" },
-  { code: "HT", name: "Haiti", dial: "+509" },
-  { code: "HN", name: "Honduras", dial: "+504" },
-  { code: "HU", name: "Hungary", dial: "+36" },
-  { code: "IS", name: "Iceland", dial: "+354" },
-  { code: "IN", name: "India", dial: "+91" },
-  { code: "ID", name: "Indonesia", dial: "+62" },
-  { code: "IR", name: "Iran", dial: "+98" },
-  { code: "IQ", name: "Iraq", dial: "+964" },
-  { code: "IE", name: "Ireland", dial: "+353" },
-  { code: "IL", name: "Israel", dial: "+972" },
-  { code: "IT", name: "Italy", dial: "+39" },
-  { code: "CI", name: "Ivory Coast", dial: "+225" },
-  { code: "JM", name: "Jamaica", dial: "+1-876" },
-  { code: "JP", name: "Japan", dial: "+81" },
-  { code: "JO", name: "Jordan", dial: "+962" },
-  { code: "KZ", name: "Kazakhstan", dial: "+7" },
-  { code: "KE", name: "Kenya", dial: "+254" },
-  { code: "KI", name: "Kiribati", dial: "+686" },
-  { code: "KW", name: "Kuwait", dial: "+965" },
-  { code: "KG", name: "Kyrgyzstan", dial: "+996" },
-  { code: "LA", name: "Laos", dial: "+856" },
-  { code: "LV", name: "Latvia", dial: "+371" },
-  { code: "LB", name: "Lebanon", dial: "+961" },
-  { code: "LS", name: "Lesotho", dial: "+266" },
-  { code: "LR", name: "Liberia", dial: "+231" },
-  { code: "LY", name: "Libya", dial: "+218" },
-  { code: "LI", name: "Liechtenstein", dial: "+423" },
-  { code: "LT", name: "Lithuania", dial: "+370" },
-  { code: "LU", name: "Luxembourg", dial: "+352" },
-  { code: "MG", name: "Madagascar", dial: "+261" },
-  { code: "MW", name: "Malawi", dial: "+265" },
-  { code: "MY", name: "Malaysia", dial: "+60" },
-  { code: "MV", name: "Maldives", dial: "+960" },
-  { code: "ML", name: "Mali", dial: "+223" },
-  { code: "MT", name: "Malta", dial: "+356" },
-  { code: "MH", name: "Marshall Islands", dial: "+692" },
-  { code: "MR", name: "Mauritania", dial: "+222" },
-  { code: "MU", name: "Mauritius", dial: "+230" },
-  { code: "MX", name: "Mexico", dial: "+52" },
-  { code: "FM", name: "Micronesia", dial: "+691" },
-  { code: "MD", name: "Moldova", dial: "+373" },
-  { code: "MC", name: "Monaco", dial: "+377" },
-  { code: "MN", name: "Mongolia", dial: "+976" },
-  { code: "ME", name: "Montenegro", dial: "+382" },
-  { code: "MA", name: "Morocco", dial: "+212" },
-  { code: "MZ", name: "Mozambique", dial: "+258" },
-  { code: "MM", name: "Myanmar", dial: "+95" },
-  { code: "NA", name: "Namibia", dial: "+264" },
-  { code: "NR", name: "Nauru", dial: "+674" },
-  { code: "NP", name: "Nepal", dial: "+977" },
-  { code: "NL", name: "Netherlands", dial: "+31" },
-  { code: "NZ", name: "New Zealand", dial: "+64" },
-  { code: "NI", name: "Nicaragua", dial: "+505" },
-  { code: "NE", name: "Niger", dial: "+227" },
-  { code: "NG", name: "Nigeria", dial: "+234" },
-  { code: "KP", name: "North Korea", dial: "+850" },
-  { code: "MK", name: "North Macedonia", dial: "+389" },
-  { code: "NO", name: "Norway", dial: "+47" },
-  { code: "OM", name: "Oman", dial: "+968" },
-  { code: "PK", name: "Pakistan", dial: "+92" },
-  { code: "PW", name: "Palau", dial: "+680" },
-  { code: "PA", name: "Panama", dial: "+507" },
-  { code: "PG", name: "Papua New Guinea", dial: "+675" },
-  { code: "PY", name: "Paraguay", dial: "+595" },
-  { code: "PE", name: "Peru", dial: "+51" },
-  { code: "PH", name: "Philippines", dial: "+63" },
-  { code: "PL", name: "Poland", dial: "+48" },
-  { code: "PT", name: "Portugal", dial: "+351" },
-  { code: "QA", name: "Qatar", dial: "+974" },
-  { code: "CG", name: "Republic of the Congo", dial: "+242" },
-  { code: "RO", name: "Romania", dial: "+40" },
-  { code: "RU", name: "Russia", dial: "+7" },
-  { code: "RW", name: "Rwanda", dial: "+250" },
-  { code: "KN", name: "Saint Kitts and Nevis", dial: "+1-869" },
-  { code: "LC", name: "Saint Lucia", dial: "+1-758" },
-  { code: "VC", name: "Saint Vincent and the Grenadines", dial: "+1-784" },
-  { code: "WS", name: "Samoa", dial: "+685" },
-  { code: "SM", name: "San Marino", dial: "+378" },
-  { code: "SA", name: "Saudi Arabia", dial: "+966" },
-  { code: "SN", name: "Senegal", dial: "+221" },
-  { code: "RS", name: "Serbia", dial: "+381" },
-  { code: "SC", name: "Seychelles", dial: "+248" },
-  { code: "SL", name: "Sierra Leone", dial: "+232" },
-  { code: "SG", name: "Singapore", dial: "+65" },
-  { code: "SK", name: "Slovakia", dial: "+421" },
-  { code: "SI", name: "Slovenia", dial: "+386" },
-  { code: "SB", name: "Solomon Islands", dial: "+677" },
-  { code: "SO", name: "Somalia", dial: "+252" },
-  { code: "ZA", name: "South Africa", dial: "+27" },
-  { code: "KR", name: "South Korea", dial: "+82" },
-  { code: "SS", name: "South Sudan", dial: "+211" },
-  { code: "ES", name: "Spain", dial: "+34" },
-  { code: "LK", name: "Sri Lanka", dial: "+94" },
-  { code: "SD", name: "Sudan", dial: "+249" },
-  { code: "SR", name: "Suriname", dial: "+597" },
-  { code: "SE", name: "Sweden", dial: "+46" },
-  { code: "CH", name: "Switzerland", dial: "+41" },
-  { code: "SY", name: "Syria", dial: "+963" },
-  { code: "TW", name: "Taiwan", dial: "+886" },
-  { code: "TJ", name: "Tajikistan", dial: "+992" },
-  { code: "TZ", name: "Tanzania", dial: "+255" },
-  { code: "TH", name: "Thailand", dial: "+66" },
-  { code: "TL", name: "Timor-Leste", dial: "+670" },
-  { code: "TG", name: "Togo", dial: "+228" },
-  { code: "TO", name: "Tonga", dial: "+676" },
-  { code: "TT", name: "Trinidad and Tobago", dial: "+1-868" },
-  { code: "TN", name: "Tunisia", dial: "+216" },
-  { code: "TR", name: "Turkey", dial: "+90" },
-  { code: "TM", name: "Turkmenistan", dial: "+993" },
-  { code: "TV", name: "Tuvalu", dial: "+688" }, // <-- fixed (you had "+"+688 in one version)
-  { code: "UG", name: "Uganda", dial: "+256" },
-  { code: "UA", name: "Ukraine", dial: "+380" },
-  { code: "AE", name: "United Arab Emirates", dial: "+971" },
-  { code: "GB", name: "United Kingdom", dial: "+44" },
-  { code: "US", name: "United States", dial: "+1" },
-  { code: "UY", name: "Uruguay", dial: "+598" },
-  { code: "UZ", name: "Uzbekistan", dial: "+998" },
-  { code: "VU", name: "Vanuatu", dial: "+678" },
-  { code: "VA", name: "Vatican City", dial: "+379" },
-  { code: "VE", name: "Venezuela", dial: "+58" },
-  { code: "VN", name: "Vietnam", dial: "+84" },
-  { code: "YE", name: "Yemen", dial: "+967" },
-  { code: "ZM", name: "Zambia", dial: "+260" },
-  { code: "ZW", name: "Zimbabwe", dial: "+263" }
-];
+/* ===== CONFIG ===== */
+const SOLAR = {
+  revealSelector: '.reveal-solar-system',
+  inViewClass: 'in-view-solar-system',
+  headerSelector: '.header',
+  anchorSelector: '[data-scroll-to]'
+};
+
+/* ===== Helpers ===== */
+function getHeaderOffset() {
+  const header = document.querySelector(SOLAR.headerSelector);
+  return header ? header.offsetHeight : 0;
+}
+
+function smoothScrollTo(targetSelector) {
+  if (!targetSelector || !targetSelector.startsWith('#')) return;
+  const target = document.querySelector(targetSelector);
+  if (!target) return;
+
+  const y = target.getBoundingClientRect().top + window.pageYOffset - getHeaderOffset();
+  window.scrollTo({ top: y, behavior: 'smooth' });
+}
+
+/* ===== Scroll Reveal that re-triggers on leave ===== */
+(function initScrollReveal() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    document.querySelectorAll(SOLAR.revealSelector).forEach(el => el.classList.add(SOLAR.inViewClass));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const el = entry.target;
+      if (entry.isIntersecting) {
+        el.classList.add(SOLAR.inViewClass);
+      } else {
+        // Remove when leaving viewport so it can animate again on return
+        el.classList.remove(SOLAR.inViewClass);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(SOLAR.revealSelector).forEach(el => io.observe(el));
+})();
+
+/* ===== Smooth in-page scrolling for elements with [data-scroll-to] ===== */
+(function initSmoothAnchors() {
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest(SOLAR.anchorSelector);
+    if (!trigger) return;
+
+    const href = trigger.getAttribute('href');
+    const dataTarget = trigger.getAttribute('data-target');
+    const targetSelector = dataTarget || href;
+
+    if (targetSelector && targetSelector.startsWith('#')) {
+      e.preventDefault();
+      smoothScrollTo(targetSelector);
+    }
+  });
+
+  // If the page loads with a hash, fix initial position for fixed header
+  window.addEventListener('load', () => {
+    if (window.location.hash) {
+      // Wait a tick so layout is ready
+      setTimeout(() => smoothScrollTo(window.location.hash), 0);
+    }
+  });
+})();
+
+/* ==========================================================
+   Logos pager (dots) + continuous marquee coexist (robust)
+   ========================================================== */
+(function initLogosPager() {
+  const wrap = document.querySelector('.logos-wrap-solar-system');
+  const track = document.getElementById('logos-track-solar-system');
+  const dotsWrap = document.getElementById('dots-solar-system');
+  if (!wrap || !track || !dotsWrap) return;
+
+  const dots = Array.from(dotsWrap.querySelectorAll('.dot-solar-system'));
+  const RESUME_DELAY = 3500; // ms after click before continuous scroll resumes
+  let resumeTimer = null;
+
+  // set active dot helper
+  function setActiveDot(idx) {
+    dots.forEach((d, i) => d.classList.toggle('is-active-solar-system', i === idx));
+  }
+  setActiveDot(0);
+
+  // compute page width (use visible viewport of the logos)
+  function pageWidth() { return wrap.clientWidth; }
+
+  // Fully disable CSS animation and let us control transform
+  function enterManualMode() {
+    track.classList.add('manual-solar-system');
+    track.style.animationPlayState = 'paused';
+  }
+
+  // Resume CSS animation from the start smoothly
+  function resumeContinuous() {
+    // remove manual transform + class and restart animation cleanly
+    track.style.transform = '';
+    track.classList.remove('manual-solar-system');
+
+    // Restart the CSS animation reliably (toggle to 'none' then back)
+    const prevAnim = getComputedStyle(track).animation;
+    track.style.animation = 'none';
+    // force reflow
+    // eslint-disable-next-line no-unused-expressions
+    track.offsetHeight;
+    // restore whatever animation was in CSS
+    track.style.animation = prevAnim;
+    track.style.animationPlayState = 'running';
+  }
+
+  // Jump to page n by translating the track
+  function goToPage(n) {
+    const idx = Math.max(0, Math.min(n, dots.length - 1));
+    setActiveDot(idx);
+
+    enterManualMode();
+
+    const offset = -idx * pageWidth();
+    track.style.transform = `translateX(${offset}px)`;
+
+    // schedule resume
+    window.clearTimeout(resumeTimer);
+    resumeTimer = window.setTimeout(resumeContinuous, RESUME_DELAY);
+  }
+
+  // Click handlers on dots
+  dots.forEach(d => {
+    d.addEventListener('click', () => {
+      const n = parseInt(d.getAttribute('data-page') || '0', 10);
+      goToPage(n);
+    });
+  });
+
+  // Maintain the same page on resize while paused
+  const ro = new ResizeObserver(() => {
+    const active = dots.findIndex(el => el.classList.contains('is-active-solar-system'));
+    if (active > -1 && track.classList.contains('manual-solar-system')) {
+      track.style.transform = `translateX(${-active * pageWidth()}px)`;
+    }
+  });
+  ro.observe(wwrap = wrap); // observe container width changes
+
+  // Also pause marquee on hover (optional, keeps prior UX)
+  wrap.addEventListener('mouseenter', () => {
+    if (!track.classList.contains('manual-solar-system')) {
+      track.style.animationPlayState = 'paused';
+    }
+  });
+  wrap.addEventListener('mouseleave', () => {
+    if (!track.classList.contains('manual-solar-system')) {
+      track.style.animationPlayState = 'running';
+    }
+  });
+})();
+
+
+/* ==========================================================
+   Count-up animation for Impact stats
+   ========================================================== */
+(function initImpactCounters() {
+  const items = document.querySelectorAll('.stat-value-solar-system-impact');
+  if (!items.length) return;
+
+  function countTo(el) {
+    const end = parseFloat(el.getAttribute('data-count-to')) || 0;
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const duration = 1400; // ms (slow & smooth)
+    const startTime = performance.now();
+
+    function tick(now) {
+      const p = Math.min(1, (now - startTime) / duration);
+      // easeOutCubic for a nice finish
+      const eased = 1 - Math.pow(1 - p, 3);
+      let val = end * eased;
+
+      // If the end has decimals, keep one decimal, else integer
+      const hasDecimal = String(end).includes('.');
+      el.textContent = prefix + (hasDecimal ? val.toFixed(1) : Math.round(val)) + suffix;
+
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = prefix + (hasDecimal ? end.toFixed(1) : Math.round(end)) + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const el = entry.target;
+      if (entry.isIntersecting) {
+        // start counting when visible
+        countTo(el);
+      } else {
+        // reset so it can play again on re-enter
+        el.textContent = (el.getAttribute('data-prefix') || '') + '0' + (el.getAttribute('data-suffix') || '');
+      }
+    });
+  }, { threshold: 0.35 });
+
+  items.forEach(el => {
+    // initialize to 0 with prefix/suffix
+    el.textContent = (el.getAttribute('data-prefix') || '') + '0' + (el.getAttribute('data-suffix') || '');
+    io.observe(el);
+  });
+})();
+/* ==========================================================
+   Solutions: "View All Solutions" toggle
+   ========================================================== */
+(function initSolutionsToggle() {
+  const grid = document.getElementById('solutions-grid-solar-system-solution');
+  const btn = document.getElementById('solutions-toggle-btn-solar-system-solution');
+  if (!grid || !btn) return;
+
+  function setState(expanded) {
+    grid.classList.toggle('is-collapsed-solar-system-solution', !expanded);
+    btn.setAttribute('aria-expanded', String(expanded));
+    btn.textContent = expanded ? 'View Fewer' : 'View All Solutions';
+
+    // Nudge IntersectionObserver so reveal animations can trigger for newly shown cards
+    window.requestAnimationFrame(() => {
+      window.dispatchEvent(new Event('scroll'));
+    });
+  }
+
+  btn.addEventListener('click', () => {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    setState(!expanded);
+  });
+
+  // default collapsed on load
+  setState(false);
+})();
+/* ==========================================================
+   Solar App: lightweight tilt/parallax for media cards
+   Targets elements with [data-tilt]
+   ========================================================== */
+(function initSolarAppTilt() {
+  const els = document.querySelectorAll('[data-tilt]');
+  if (!els.length) return;
+
+  const MAX_TILT = 8;         // degrees
+  const MAX_TRANS = 10;       // px translate for parallax feel
+  const EASE = 'cubic-bezier(.2,.65,.2,1)';
+
+  function applyTilt(el, e) {
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    const rotX = (+dy * MAX_TILT).toFixed(2);
+    const rotY = (-dx * MAX_TILT).toFixed(2);
+    const tx = (-dx * MAX_TRANS).toFixed(2);
+    const ty = (-dy * MAX_TRANS).toFixed(2);
+
+    el.style.transform = `perspective(800px) rotateX(${rotX}deg) rotateY(${rotY}deg) translate(${tx}px, ${ty}px)`;
+    el.style.transition = 'transform .08s';
+  }
+
+  function resetTilt(el) {
+    el.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translate(0,0)';
+    el.style.transition = `transform .5s ${EASE}`;
+  }
+
+  els.forEach(el => {
+    el.addEventListener('pointermove', (e) => applyTilt(el, e));
+    el.addEventListener('pointerleave', () => resetTilt(el));
+    el.addEventListener('pointerdown', () => resetTilt(el)); // prevent sticky tilt on touch
+  });
+})();
+
+
+/* ==========================================================
+   Projects carousel: arrows scroll by one full "page"
+   ========================================================== */
+(function initProjectsCarousel() {
+  const viewport = document.getElementById('projects-viewport-solar-system-projects');
+  const prevBtn = document.querySelector('.prev-solar-system-projects');
+  const nextBtn = document.querySelector('.next-solar-system-projects');
+  if (!viewport || !prevBtn || !nextBtn) return;
+
+  function updateButtons() {
+    const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+    const atStart = viewport.scrollLeft <= 0;
+    const atEnd = viewport.scrollLeft >= maxScroll - 1;
+    prevBtn.disabled = atStart;
+    nextBtn.disabled = atEnd;
+  }
+
+  function scrollPage(dir) {
+    const distance = viewport.clientWidth; // page = visible width
+    viewport.scrollBy({ left: dir * distance, behavior: 'smooth' });
+    // optimistic button state; will correct on 'scroll' event
+    setTimeout(updateButtons, 350);
+  }
+
+  prevBtn.addEventListener('click', () => scrollPage(-1));
+  nextBtn.addEventListener('click', () => scrollPage(1));
+
+  // keep buttons in sync
+  viewport.addEventListener('scroll', () => {
+    // debounced update
+    window.clearTimeout(viewport._btnTimer);
+    viewport._btnTimer = setTimeout(updateButtons, 80);
+  });
+  window.addEventListener('resize', updateButtons);
+
+  // init
+  updateButtons();
+})();
+// 
+/* ==========================================================
+   Types tabs: click/keyboard + hash support
+   ========================================================== */
+(function initSolarTypes() {
+  const tabs = Array.from(document.querySelectorAll('.tab-btn-solar-system-types'));
+  const panels = {
+    'on-grid': document.getElementById('panel-on-grid-solar-system-types'),
+    'off-grid': document.getElementById('panel-off-grid-solar-system-types'),
+    'hybrid': document.getElementById('panel-hybrid-solar-system-types')
+  };
+  if (!tabs.length) return;
+
+  function activate(type) {
+    // tabs
+    tabs.forEach(btn => {
+      const isActive = btn.dataset.type === type;
+      btn.classList.toggle('is-active-solar-system-types', isActive);
+      btn.setAttribute('aria-selected', String(isActive));
+      // tabindex for roving focus
+      btn.setAttribute('tabindex', isActive ? '0' : '-1');
+    });
+    // panels
+    Object.entries(panels).forEach(([key, el]) => {
+      const show = key === type;
+      if (!el) return;
+      el.classList.toggle('is-active-solar-system-types', show);
+      el.hidden = !show;
+      if (show) {
+        // restart small fade-in animation
+        el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+      }
+    });
+  }
+
+  // Click
+  tabs.forEach(btn => btn.addEventListener('click', () => activate(btn.dataset.type)));
+
+  // Keyboard: left/right arrows
+  document.querySelector('.tabs-solar-system-types')?.addEventListener('keydown', (e) => {
+    const idx = tabs.findIndex(b => b.classList.contains('is-active-solar-system-types'));
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      const next = (idx + dir + tabs.length) % tabs.length;
+      tabs[next].focus();
+      tabs[next].click();
+    }
+  });
+
+  // Hash support e.g. #hybrid
+  function fromHash() {
+    const h = (location.hash || '').replace('#', '').toLowerCase();
+    if (['on-grid', 'off-grid', 'hybrid'].includes(h)) activate(h);
+  }
+  window.addEventListener('hashchange', fromHash);
+
+  // init
+  activate('on-grid');
+  fromHash();
+})();
+/* ==========================================================
+   Scoped tabs for all .section-types-solar-system-types
+   (no global getElementById; supports multiple instances)
+   ========================================================== */
+(function initAllSolarTypeTabs() {
+  document.querySelectorAll('.section-types-solar-system-types').forEach(section => {
+    const tabsWrap = section.querySelector('.tabs-solar-system-types');
+    if (!tabsWrap) return;
+
+    const tabs = Array.from(section.querySelectorAll('.tab-btn-solar-system-types'));
+    const panels = Array.from(section.querySelectorAll('.panel-solar-system-types'));
+    if (!tabs.length || !panels.length) return;
+
+    function activate(btn) {
+      // Tabs state
+      tabs.forEach(t => {
+        const isActive = t === btn;
+        t.classList.toggle('is-active-solar-system-types', isActive);
+        t.setAttribute('aria-selected', String(isActive));
+        t.setAttribute('tabindex', isActive ? '0' : '-1');
+      });
+
+      // Panels state (scoped within this section)
+      const targetId = btn.getAttribute('aria-controls');
+      panels.forEach(p => {
+        const show = p.id === targetId;
+        p.hidden = !show;
+        p.classList.toggle('is-active-solar-system-types', show);
+        if (show) { p.style.animation = 'none'; p.offsetHeight; p.style.animation = ''; }
+      });
+    }
+
+    // Click to activate
+    tabs.forEach(btn => btn.addEventListener('click', () => activate(btn)));
+
+    // Keyboard: Left/Right arrows within this tablist
+    tabsWrap.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      const current = tabs.findIndex(t => t.classList.contains('is-active-solar-system-types'));
+      const dir = e.key === 'ArrowRight' ? 1 : -1;
+      const next = (current + dir + tabs.length) % tabs.length;
+      tabs[next].focus();
+      activate(tabs[next]);
+    });
+
+    // Init: use the one marked active or the first
+    activate(tabs.find(t => t.classList.contains('is-active-solar-system-types')) || tabs[0]);
+  });
+})();
+
+/* IntersectionObserver reveal - shows elements when they enter the viewport,
+   hides them again when they leave (works on scroll down and up). */
+(function () {
+  const els = document.querySelectorAll('.reveal-up');
+  if (!('IntersectionObserver' in window) || !els.length) {
+    els.forEach(el => el.classList.add('is-visible-mobility'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible-mobility');
+      } else {
+        entry.target.classList.remove('is-visible-mobility');
+      }
+    });
+  }, { threshold: 0.18 });
+
+  els.forEach(el => io.observe(el));
+})();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.-gemini-tab');
+  const contents = document.querySelectorAll('.-gemini-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to the clicked tab
+      tab.classList.add('active');
+
+      // Find the corresponding content using the data-tab attribute
+      const tabId = tab.getAttribute('data-tab');
+      const content = document.getElementById(`${tabId}-content`);
+
+      // Add active class to the content
+      if (content) {
+        content.classList.add('active');
+      }
+    });
+  });
+
+  // Set the default active tab and content on page load
+  const defaultTab = document.querySelector('.-gemini-tab[data-tab="mission"]');
+  const defaultContent = document.getElementById('mission-content');
+
+  if (defaultTab && defaultContent) {
+    defaultTab.classList.add('active');
+    defaultContent.classList.add('active');
+  }
+});
 
 (function () {
-  // DOM
-  const modal = document.getElementById("demoModal");
-  const openers = document.querySelectorAll(".js-open-demo, .book-demo-btn");
-  const form = document.getElementById("demoForm");
-  if (!modal || !form) return;
+  const grid = document.getElementById('grid-neplan-card-with-animation');
+  if (!grid) return;
+  const cards = grid.querySelectorAll('.card-neplan-card-with-animation');
 
-  const closers = modal.querySelectorAll("[data-close-demo]");
-  const submitBtn = document.getElementById("submitBtn");
-  const countrySelect = document.getElementById("country");
-  const phoneInput = document.getElementById("phone");
-
-  // ----------------- helpers -----------------
-  const normalizeDial = (s) => (s || "").replace(/[^0-9+]/g, ""); // "+1-242" -> "+1242"
-
-  let COUNTRY_OPT_CACHE = [];
-  function rebuildCountryCache() {
-    COUNTRY_OPT_CACHE = Array.from(countrySelect.options)
-      .slice(1) // skip default
-      .map((o) => {
-        const [code, dial] = (o.value || "").split("|");
-        return { value: o.value, code, dial, nDial: normalizeDial(dial || "") };
-      });
-  }
-
-  function findOptionByPhone(val) {
-    const p = normalizeDial((val || "").trim());
-    if (!p.startsWith("+")) return null;
-
-    let best = null;
-    for (const opt of COUNTRY_OPT_CACHE) {
-      if (opt.nDial && p.startsWith(opt.nDial)) {
-        if (!best || opt.nDial.length > best.nDial.length) best = opt;
-      }
-    }
-    return best;
-  }
-
-  function setPhoneDial(dial) {
-    if (!dial) return;
-    // Remove existing +<digits...> prefix and replace with the selected dial
-    const rest = (phoneInput.value || "").replace(/^\+\s*[\d\-\s()]+/, "").trim();
-    phoneInput.value = `${dial}${rest ? " " + rest : ""}`;
-  }
-
-  function setLoading(is) {
-    if (!submitBtn) return;
-    if (is) {
-      submitBtn.classList.add("is-loading");
-      submitBtn.disabled = true;
-      submitBtn.setAttribute("aria-busy", "true");
-    } else {
-      submitBtn.classList.remove("is-loading");
-      submitBtn.disabled = false;
-      submitBtn.removeAttribute("aria-busy");
-    }
-  }
-
-  function showToast(msg, type = "error", timeoutMs = 4000) {
-    const root = document.getElementById("cmmsToastRoot");
-    if (!root) return;
-
-    const el = document.createElement("div");
-    el.className = "cmms-toast " + (type === "ok" ? "cmms-toast--ok" : "cmms-toast--error");
-    el.innerHTML =
-      `<span aria-hidden="true">${type === "ok" ? "✔️" : "⚠️"}</span>` +
-      `<div>${msg}</div>` +
-      `<button class="cmms-toast__close" aria-label="Close">×</button>`;
-
-    root.appendChild(el);
-
-    const remove = () => el.remove();
-    el.querySelector(".cmms-toast__close").addEventListener("click", remove);
-    setTimeout(remove, timeoutMs);
-  }
-
-  const err = (name, msg = "") => {
-    const el = document.querySelector(`[data-error-for="${name}"]`);
-    if (el) el.textContent = msg;
-  };
-
-  const clearErr = () => {
-    form.querySelectorAll(".error").forEach((e) => (e.textContent = ""));
-    form.querySelectorAll(".is-error").forEach((el) => {
-      el.classList.remove("is-error");
-      el.removeAttribute("aria-invalid");
-    });
-  };
-
-  function validate() {
-    clearErr();
-
-    const fail = (name, msg) => {
-      err(name, msg);
-      showToast(msg, "error");
-      const input = form.querySelector(`[name="${name}"]`);
-      if (input) {
-        input.classList.add("is-error");
-        input.setAttribute("aria-invalid", "true");
-        input.scrollIntoView({ block: "center", behavior: "smooth" });
-        setTimeout(() => input.focus({ preventScroll: true }), 250);
-      }
-      return false;
-    };
-
-    const full_name = (form.full_name?.value || "").trim();
-    if (!/^[A-Za-z\s'.-]{2,}$/.test(full_name)) {
-      return fail("full_name", "Please enter a valid full name (letters only).");
-    }
-
-    const company = (form.company?.value || "").trim();
-    if (company.length < 2) {
-      return fail("company", "Company is required.");
-    }
-
-    const email = (form.email?.value || "").trim();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      return fail("email", "Enter a valid email address.");
-    }
-
-    const phone = (form.phone?.value || "").trim();
-    if (!/^\+?\d[\d\s\-()]{6,}$/.test(phone)) {
-      return fail("phone", "Enter a valid phone number.");
-    }
-
-    if (!form.country?.value) {
-      return fail("country", "Please select a country.");
-    }
-
-    return true;
-  }
-
-  // ----------------- Build countries once -----------------
-  if (countrySelect) {
-    const frag = document.createDocumentFragment();
-    const def = document.createElement("option");
-    def.value = "";
-    def.textContent = "-- Select Country --";
-    frag.appendChild(def);
-
-    COUNTRIES.forEach((c) => {
-      const o = document.createElement("option");
-      o.value = `${c.code}|${c.dial}`;
-      o.textContent = `${c.name} (${c.dial})`;
-      frag.appendChild(o);
-    });
-
-    countrySelect.appendChild(frag);
-    rebuildCountryCache();
-  }
-
-  // ----------------- Phone -> Country (longest match) -----------------
-  if (phoneInput && countrySelect) {
-    phoneInput.addEventListener("input", () => {
-      const match = findOptionByPhone(phoneInput.value);
-      if (match) countrySelect.value = match.value;
-    });
-  }
-
-  // ----------------- Country -> Phone (force dial code prefix) -----------------
-  if (countrySelect && phoneInput) {
-    countrySelect.addEventListener("change", () => {
-      const [, dial] = (countrySelect.value || "").split("|");
-      if (!dial) {
-        phoneInput.placeholder = "+61 4xx xxx xxx";
-        return;
-      }
-      phoneInput.placeholder = `${dial} ...`;
-
-      const current = normalizeDial(phoneInput.value);
-      const nd = normalizeDial(dial);
-      if (!current.startsWith(nd)) setPhoneDial(dial);
-      else setPhoneDial(dial); // normalize formatting
-    });
-  }
-
-  // ----------------- Modal open/close -----------------
-  const open = (e) => {
-    e?.preventDefault();
-    modal.classList.add("is-open");
-  };
-  const close = (e) => {
-    e?.preventDefault();
-    modal.classList.remove("is-open");
-  };
-
-  openers.forEach((el) => el.addEventListener("click", open));
-  closers.forEach((el) => el.addEventListener("click", close));
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") close();
-  });
-
-  // ----------------- Submit handling (ONLY ONE) -----------------
-  // IMPORTANT:
-  // Your earlier JS had TWO submit listeners and pageshow calling setLoading() out of scope.
-  // This version: one submit handler + optional fetch mode (recommended).
-
-  let submitting = false;
-
-  // OPTION A (Recommended): submit via fetch, then redirect ONLY when server confirms ok
-  // This avoids "thank you" page showing before the POST fully completes.
-  // Works best if your Django endpoint returns JSON {ok:true, redirect:"/thanks/"}.
-  // If you cannot change backend, set USE_FETCH_SUBMIT=false to use normal submit.
-  const USE_FETCH_SUBMIT = true;
-
-  async function fetchSubmit(e) {
-    e.preventDefault();
-    if (submitting) return;
-
-    if (!validate()) return;
-
-    submitting = true;
-    setLoading(true);
-
-    try {
-      const url = form.getAttribute("action");
-      const formData = new FormData(form);
-
-      const resp = await fetch(url, {
-        method: "POST",
-        body: formData,
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      });
-
-      // If server returns JSON (recommended)
-      const ct = (resp.headers.get("content-type") || "").toLowerCase();
-      if (ct.includes("application/json")) {
-        const data = await resp.json();
-        if (resp.ok && data.ok) {
-          // redirect only after server confirms saved/sent
-          window.location.href = data.redirect || "/contact/thanks/";
-          return;
-        }
-        showToast(data.error || "Submission failed. Please try again.", "error");
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('show-neplan-card-with-animation');
       } else {
-        // If server returns HTML redirect (not JSON), fallback:
-        // If response is redirect, fetch follows it; we can go to resp.url
-        if (resp.ok) {
-          window.location.href = resp.url || "/contact/thanks/";
-          return;
-        }
-        showToast("Submission failed. Please try again.", "error");
+        // remove so it replays when scrolling back (LIFO feel)
+        e.target.classList.remove('show-neplan-card-with-animation');
       }
-    } catch (err) {
-      showToast("Network error. Please try again.", "error");
-    } finally {
-      submitting = false;
-      setLoading(false);
+    });
+  }, { threshold: 0.18 });
+
+  cards.forEach(c => io.observe(c));
+})();
+
+
+(() => {
+  const SELECTOR = '.reveal-left, .reveal-right, .reveal-up, .reveal-down';
+
+  // Apply per-element delay from data attribute if provided
+  document.querySelectorAll(SELECTOR).forEach(el => {
+    const d = el.getAttribute('data-reveal-delay');
+    if (d) el.style.setProperty('--reveal-delay', /^\d+$/.test(d) ? `${d}ms` : d);
+  });
+
+  // Auto-stagger children inside a .reveal-group
+  document.querySelectorAll('.reveal-group[data-reveal-stagger]').forEach(group => {
+    const step = parseInt(group.dataset.revealStagger, 10) || 120; // ms
+    let i = 0;
+    group.querySelectorAll(SELECTOR).forEach(el => {
+      el.style.setProperty('--reveal-delay', `${i * step}ms`);
+      i++;
+    });
+  });
+
+  // Observe and toggle visibility (replays when scrolling back unless .reveal-once)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) target.classList.add('is-visible');
+      else if (!target.classList.contains('reveal-once'))
+        target.classList.remove('is-visible');
+    });
+  }, { threshold: 0.18 });
+
+  document.querySelectorAll(SELECTOR).forEach(el => io.observe(el));
+})();
+
+/* Intersection Observer for gentle reveals */
+(function () {
+  const items = document.querySelectorAll('.reveal-lv-electrical-panel-');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-panel-');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  items.forEach(el => io.observe(el));
+
+  /* Simple form handler (prevent empty submit in demo) */
+  const form = document.getElementById('service-form-lv-electrical-panel-');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    // You can hook this to your backend
+    alert(`Thanks ${fd.get('name') || ''}! We’ll contact you soon.`);
+    form.reset();
+  });
+})();
+
+/* IntersectionObserver reveal - shows elements when they enter the viewport,
+   hides them again when they leave (works on scroll down and up). */
+(function () {
+  const els = document.querySelectorAll('.reveal-up');
+  if (!('IntersectionObserver' in window) || !els.length) {
+    els.forEach(el => el.classList.add('is-visible-mobility'));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible-mobility');
+      } else {
+        entry.target.classList.remove('is-visible-mobility');
+      }
+    });
+  }, { threshold: 0.18 });
+
+  els.forEach(el => io.observe(el));
+})();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabs = document.querySelectorAll('.-gemini-tab');
+  const contents = document.querySelectorAll('.-gemini-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and contents
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      // Add active class to the clicked tab
+      tab.classList.add('active');
+
+      // Find the corresponding content using the data-tab attribute
+      const tabId = tab.getAttribute('data-tab');
+      const content = document.getElementById(`${tabId}-content`);
+
+      // Add active class to the content
+      if (content) {
+        content.classList.add('active');
+      }
+    });
+  });
+
+  // Set the default active tab and content on page load
+  const defaultTab = document.querySelector('.-gemini-tab[data-tab="mission"]');
+  const defaultContent = document.getElementById('mission-content');
+
+  if (defaultTab && defaultContent) {
+    defaultTab.classList.add('active');
+    defaultContent.classList.add('active');
+  }
+});
+
+(function () {
+  const grid = document.getElementById('grid-neplan-card-with-animation');
+  if (!grid) return;
+  const cards = grid.querySelectorAll('.card-neplan-card-with-animation');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('show-neplan-card-with-animation');
+      } else {
+        // remove so it replays when scrolling back (LIFO feel)
+        e.target.classList.remove('show-neplan-card-with-animation');
+      }
+    });
+  }, { threshold: 0.18 });
+
+  cards.forEach(c => io.observe(c));
+})();
+
+
+(() => {
+  const SELECTOR = '.reveal-left, .reveal-right, .reveal-up, .reveal-down';
+
+  // Apply per-element delay from data attribute if provided
+  document.querySelectorAll(SELECTOR).forEach(el => {
+    const d = el.getAttribute('data-reveal-delay');
+    if (d) el.style.setProperty('--reveal-delay', /^\d+$/.test(d) ? `${d}ms` : d);
+  });
+
+  // Auto-stagger children inside a .reveal-group
+  document.querySelectorAll('.reveal-group[data-reveal-stagger]').forEach(group => {
+    const step = parseInt(group.dataset.revealStagger, 10) || 120; // ms
+    let i = 0;
+    group.querySelectorAll(SELECTOR).forEach(el => {
+      el.style.setProperty('--reveal-delay', `${i * step}ms`);
+      i++;
+    });
+  });
+
+  // Observe and toggle visibility (replays when scrolling back unless .reveal-once)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(({ target, isIntersecting }) => {
+      if (isIntersecting) target.classList.add('is-visible');
+      else if (!target.classList.contains('reveal-once'))
+        target.classList.remove('is-visible');
+    });
+  }, { threshold: 0.18 });
+
+  document.querySelectorAll(SELECTOR).forEach(el => io.observe(el));
+})();
+
+/* Simple reveal on scroll */
+(() => {
+  const els = document.querySelectorAll('.reveal-lv-electrical-panel-');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-panel-');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  els.forEach(el => io.observe(el));
+})();
+
+// Reveal on scroll for the About section
+(() => {
+  const items = document.querySelectorAll('.reveal-lv-electrical-about-');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-about-');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  items.forEach(el => io.observe(el));
+})();
+(() => {
+  const els = document.querySelectorAll(
+    '.reveal-left-lv-electrical-services, .reveal-right-lv-electrical-services, .reveal-up-lv-electrical-services'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-services');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  els.forEach(el => io.observe(el));
+})();
+(() => {
+  const els = document.querySelectorAll(
+    '.reveal-left-lv-electrical-services, .reveal-right-lv-electrical-services, .reveal-up-lv-electrical-services'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-services');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+  els.forEach(el => io.observe(el));
+})();
+(() => {
+  const els = document.querySelectorAll(
+    '.reveal-left-lv-electrical-services, .reveal-right-lv-electrical-services, .reveal-up-lv-electrical-services'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-services');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+  els.forEach(el => io.observe(el));
+})();
+// Simple reveal on scroll for the process section
+(() => {
+  const els = document.querySelectorAll(
+    '.reveal-left-lv-electrical-process, .reveal-right-lv-electrical-process'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('reveal-in-lv-electrical-process');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  els.forEach(el => io.observe(el));
+})();
+// Reveal-on-scroll for the Why Choose Us section
+(() => {
+  const targets = document.querySelectorAll(
+    '.reveal-left-le-electrical-why-us, .reveal-right-le-electrical-why-us, .reveal-top-le-electrical-why-us, .reveal-bottom-le-electrical-why-us'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-in-le-electrical-why-us');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.18 });
+
+  targets.forEach(t => io.observe(t));
+})();
+
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.getElementById('servicesGrid');
+  const detail = document.getElementById('svcDetail');
+  const exploreBtn = document.getElementById('exploreServicesBtn'); // header button if present
+
+  if (!grid || !detail) return;
+
+  // --- DETAILS CONTENT MAP ---
+  const detailsMap = {powertransformers: {
+  title: 'Power Transformers',
+  body: `
+    <p>
+      A <strong>power transformer</strong> is a static electrical device that transfers electrical energy between two or more circuits through electromagnetic induction.
+      It is primarily used to step up or step down voltage levels in AC (alternating current) circuits, enabling efficient power transmission over long distances.
+    </p>
+
+    <h4>Applications of Power Transformers</h4>
+    <ul>
+      <li><strong>Electrical Power Distribution:</strong> Used in power stations to step up voltage for long-distance transmission and step down at substation for local distribution.</li>
+      <li><strong>Industrial Plants:</strong> Regulate voltage supply within factories, ensuring machines and equipment receive the correct voltage levels.</li>
+      <li><strong>Commercial Buildings:</strong> Integrated into building distribution systems to supply consistent power to large facilities.</li>
+      <li><strong>Renewable Energy Systems:</strong> Connect renewable sources like wind and solar plants to the grid by adjusting voltage to match system requirements.</li>
+      <li><strong>Electric Utilities:</strong> Essential for voltage conversion within electric grids to maintain stability and reliability.</li>
+    </ul>
+
+    <h4>Where Power Transformers Are Used</h4>
+    <ul>
+      <li><strong>Power Generation Plants:</strong> Adjust voltage between generators and transmission networks for optimal transfer efficiency.</li>
+      <li><strong>Substations:</strong> Convert high voltage from transmission lines into lower voltage suitable for end users.</li>
+      <li><strong>Industrial Facilities:</strong> Common in steel plants, chemical factories, and mining operations that demand high electrical power.</li>
+      <li><strong>Residential Areas:</strong> Part of the distribution network that delivers electricity safely to homes and smaller commercial areas.</li>
+    </ul>
+  `,
+  image: { src: '../static/images/type1.avif', alt: 'High-voltage power transformer installation' }
+},
+    distributiontransformers: {
+  title: 'Distribution Transformers',
+  body: `
+    <p>
+      A <strong>distribution transformer</strong> is used in the final stage of the electric power distribution system.
+      It steps down the high voltage received from the transmission network to a lower voltage suitable for consumer use
+      in homes, commercial buildings, and industries. Typically, these transformers are either pole-mounted or ground-mounted,
+      positioned close to the point of consumption.
+    </p>
+
+    <h4>Where We Use Distribution Transformers</h4>
+    <ul>
+      <li><strong>Residential Areas:</strong> Step down high-voltage electricity to safe and usable levels for households.</li>
+      <li><strong>Commercial and Industrial Areas:</strong> Supply power to offices, businesses, and factories at suitable voltage levels for their equipment.</li>
+      <li><strong>Rural Areas:</strong> Provide localized power distribution for small towns and remote communities.</li>
+    </ul>
+  `,
+  image: { src: '../static/images/type2.avif', alt: 'Pole-mounted distribution transformer' }
+},
+    unitsubstation:  {
+  title: 'Unit Substation Transformers',
+  body: `
+    <p>
+      A <strong>Unit Substation Transformer</strong> is a compact, self-contained system that combines a transformer with
+      essential components such as circuit breakers, switches, and protective devices. It is designed for efficient,
+      localized distribution of electricity — typically at medium to low voltage levels.
+    </p>
+    <p>
+      These substation are ideal for industrial, commercial, and large residential applications where space is limited.
+      They provide a space-saving and cost-effective solution for transforming and distributing electrical power safely
+      and reliably.
+    </p>
+
+    <h4>Applications and Uses</h4>
+    <ul>
+      <li><strong>Industrial Settings:</strong> Step down high-voltage power for machinery and plant equipment in factories.</li>
+      <li><strong>Commercial Buildings:</strong> Supply reliable power to office complexes, malls, and shopping centers.</li>
+      <li><strong>Urban Areas:</strong> Perfect for cities and densely populated areas requiring compact distribution solutions.</li>
+      <li><strong>Renewable Energy Integration:</strong> Used in solar and wind systems to transform voltage for grid connection or localized distribution.</li>
+    </ul>
+  `,
+  image: { src: '../static/images/type3.avif', alt: 'Compact unit substation transformer system' }
+},
+    compact: {
+  title: 'Compact Substations',
+  body: `
+    <p>
+      A <strong>Compact Substation</strong> is a small, integrated electrical facility designed to transform electrical voltage
+      from high to low levels and distribute power efficiently. It combines key components such as transformers, switchgear,
+      protection devices, and control systems into a single, space-efficient unit.
+    </p>
+    <p>
+      Compact substation are typically installed in areas where land is limited or where a streamlined power distribution
+      solution is needed, providing safety, reliability, and reduced installation time.
+    </p>
+
+    <h4>Applications</h4>
+    <ul>
+      <li><strong>Urban Areas:</strong> Ideal for cities where space is constrained and a reliable power supply is essential.</li>
+      <li><strong>Industrial Plants:</strong> Step down transmission voltages to levels suitable for industrial machinery and systems.</li>
+      <li><strong>Renewable Energy Integration:</strong> Enable solar and wind power systems to be efficiently connected to the grid.</li>
+      <li><strong>Railways:</strong> Supply power to train lines, signaling systems, and associated railway infrastructure.</li>
+    </ul>
+
+    <h4>Where to Use</h4>
+    <ul>
+      <li><strong>Residential Areas:</strong> Power distribution for dense housing or apartment developments.</li>
+      <li><strong>Commercial Complexes:</strong> Serve shopping malls, offices, and other commercial properties efficiently.</li>
+      <li><strong>Construction Sites:</strong> Temporary yet reliable power distribution during large-scale project execution.</li>
+      <li><strong>Remote Locations:</strong> Ideal for sites with limited infrastructure where traditional substation are impractical.</li>
+    </ul>
+  `,
+  image: { src: '../static/images/type4.avif', alt: 'Compact substation unit for efficient power distribution' }
+},
+drytype: {
+  title: 'Dry Type Transformers',
+  body: `
+    <p>
+      A <strong>Dry Type Transformer</strong> uses air as the cooling medium instead of oil, making it a safer and more
+      environmentally friendly option. These transformers are ideal for locations where safety and cleanliness are
+      critical, as they eliminate the risk of oil leaks and associated fire hazards.
+    </p>
+
+    <h4>Applications</h4>
+    <ul>
+      <li><strong>Indoor Installations:</strong> Perfect for buildings, factories, and high-risk facilities due to their non-flammable design.</li>
+      <li><strong>Urban Areas:</strong> Suitable for city environments where space is limited and environmental regulations are strict.</li>
+      <li><strong>Renewable Energy:</strong> Commonly used in solar and wind systems for voltage conversion and energy integration.</li>
+      <li><strong>Mining and Offshore:</strong> Ideal for hazardous areas such as mines or offshore platforms where fire and explosion risks exist.</li>
+    </ul>
+
+    <h4>Where We Use Them</h4>
+    <ul>
+      <li><strong>Commercial Buildings:</strong> Offices, shopping malls, and public facilities requiring safe indoor power distribution.</li>
+      <li><strong>Industrial Applications:</strong> Manufacturing plants, production lines, and automated systems.</li>
+      <li><strong>Renewable Energy Projects:</strong> Solar farms, wind farms, and hybrid power generation systems.</li>
+      <li><strong>Public Utilities:</strong> Substations and power distribution networks for urban and rural areas.</li>
+    </ul>
+  `,
+   image: {
+  src: "../static/images/type5.avif",
+  alt: "Dry type transformer for indoor and renewable energy use"
+}
+  },
+special: {
+  title: 'Special Transformers',
+  body: `
+    <p>
+      <strong>Special Transformers</strong> are designed to meet specific, non-standard requirements across a range of
+      specialized applications. Unlike conventional transformers used for general voltage conversion, these are customized
+      for unique operational needs such as high efficiency, compact design, or specific environmental and performance conditions.
+    </p>
+
+    <h4>Types of Special Transformers and Their Applications</h4>
+    <ul>
+      <li><strong>Auto-Transformers:</strong> Used in high-voltage transmission and distribution networks to adjust voltages efficiently. Common in motor starting applications requiring high efficiency.</li>
+      <li><strong>Isolation Transformers:</strong> Provide electrical isolation between circuits to prevent noise and protect sensitive equipment—used in medical, laboratory, and audio equipment.</li>
+      <li><strong>Arc Furnace Transformers:</strong> Specially built for electric arc furnaces in steel manufacturing, capable of handling high power and extreme operating conditions.</li>
+      <li><strong>Frequency Converters:</strong> Convert electrical supply frequency (e.g., 50 Hz to 60 Hz) for industrial equipment operating across different regional power standards.</li>
+      <li><strong>Rectifier Transformers:</strong> Supply DC voltage to rectifier circuits for DC motors, electroplating, and battery charging systems.</li>
+      <li><strong>Oil-Cooled Transformers:</strong> Heavy-duty units used in power plants and substation; the oil provides both cooling and insulation for continuous, high-load operation.</li>
+      <li><strong>Gas Insulated Transformers (GIT):</strong> Ideal for confined or harsh environments where air-insulated designs are impractical—used in underground or space-limited installations.</li>
+      <li><strong>Current Transformers (CT):</strong> Convert high system currents into lower, measurable values for monitoring and protective relaying applications.</li>
+    </ul>
+
+    <h4>Use Cases</h4>
+    <ul>
+      <li><strong>Industrial Applications:</strong> Found in power plants, factories, and steel mills supporting heavy machinery and specialized processes.</li>
+      <li><strong>Healthcare:</strong> Used in medical devices and equipment requiring electrical isolation for patient safety.</li>
+      <li><strong>Power Distribution:</strong> Applied in systems with specific voltage and frequency requirements or where circuit isolation is necessary.</li>
+      <li><strong>Renewable Energy:</strong> Integrated into solar farms, wind plants, and hybrid systems for voltage or frequency adaptation.</li>
+    </ul>
+  `,
+  image: { src: '../static/images/type6.avif', alt: 'Special type transformers for industrial and renewable energy applications' }
+},
+
+
+
+
+  };
+
+  // --- RENDER DETAILS (single function) ---
+  function openDetails(key) {
+    const data = detailsMap[key];
+    if (!data) return;
+
+    const imgHTML = data.image
+      ? `<figure class="svc-detail-figure"><img class="svc-detail-img" src="${data.image.src}" alt="${data.image.alt || ''}"></figure>`
+      : '';
+
+    detail.innerHTML = `
+      <div class="svc-detail-layout">
+        ${imgHTML}
+        <div class="svc-detail-copy">
+          <h3>${data.title}</h3>
+          ${data.body || ''}
+        </div>
+      </div>
+    `;
+    detail.style.display = 'block';
+    detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function closeDetails() {
+    detail.style.display = 'none';
+    detail.innerHTML = '';
+  }
+
+  // --- CLICK HANDLER (delegated) ---
+  grid.addEventListener('click', (e) => {
+    const btn = e.target.closest('.svc-cta-lv-electrical-services');
+    if (!btn) return;
+    const key = btn.getAttribute('data-detail');
+    const currentTitle = detail.querySelector('h3')?.textContent || '';
+    if (detail.style.display === 'block' && currentTitle === (detailsMap[key]?.title || '')) {
+      closeDetails();
+    } else {
+      openDetails(key);
+    }
+  });
+
+  // --- EXPLORE / VIEW LESS toggle (uses .is-hidden on extra cards) ---
+  if (exploreBtn) {
+    const allCards = Array.from(grid.querySelectorAll('.svc-item-lv-electrical-services'));
+    const extraCards = allCards.slice(3); // cards 4..7
+    let expanded = false;
+
+    function setExpanded(state) {
+      expanded = state;
+      if (expanded) {
+        extraCards.forEach(el => el.classList.remove('is-hidden'));
+        exploreBtn.textContent = 'View Less';
+        exploreBtn.setAttribute('aria-expanded', 'true');
+        
+      } else {
+        extraCards.forEach(el => el.classList.add('is-hidden'));
+        closeDetails();
+        exploreBtn.textContent = 'Explore Types';
+        exploreBtn.setAttribute('aria-expanded', 'false');
+        
+      }
+      // retrigger reveal animations if you use them
+      extraCards.forEach(el => {
+        el.classList.remove('reveal-in-lv-electrical-services');
+        void el.offsetWidth;
+      });
+    }
+
+    // init collapsed
+    setExpanded(false);
+
+    exploreBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setExpanded(!expanded);
+    });
+  }
+
+  // --- SCROLL REVEAL (bi-directional) ---
+  const revealEls = document.querySelectorAll(
+    '.reveal-left-lv-electrical-services, .reveal-right-lv-electrical-services, .reveal-up-lv-electrical-services'
+  );
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-in-lv-electrical-services');
+      } else {
+        entry.target.classList.remove('reveal-in-lv-electrical-services');
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+  revealEls.forEach(el => io.observe(el));
+});
+(() => {
+  const modal = document.getElementById('csc-modal');
+  const form  = document.getElementById('csc-form');
+  const close = modal.querySelector('.modal-close-csc-solar-system-csc-products');
+  const successPane  = document.getElementById('csc-success');
+  const docNameInput = document.getElementById('csc-doc-name');
+
+  function openModal() {
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    successPane.hidden = true;
+    form.hidden = false;
+    form.reset();
+    setTimeout(() => document.getElementById('csc-name')?.focus(), 50);
+  }
+  function closeModal() {
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+  }
+
+  // Open from each "Request Download" button
+  document.querySelectorAll('.request-download-csc-solar-system-csc-products').forEach(btn => {
+    btn.addEventListener('click', () => {
+      docNameInput.value = btn.dataset.doc || '';
+      openModal();
+    });
+  });
+
+  // Close handlers
+  close.addEventListener('click', closeModal);
+  modal.querySelector('.modal-backdrop-csc-solar-system-csc-products')
+       .addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+})();
+(function(){
+  // Reveal on scroll
+  const els = document.querySelectorAll('.reveal-cmms-all-features');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('is-visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, {threshold: .2});
+  els.forEach(el=>io.observe(el));
+
+  // Make keyboard Enter activate cards nicely
+  document.querySelectorAll('.card-cmms-all-features').forEach(a=>{
+    a.addEventListener('keydown',(ev)=>{
+      if(ev.key === 'Enter' || ev.key === ' '){
+        ev.preventDefault();
+        a.click();
+      }
+    });
+  });
+})();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const faqCards = document.querySelectorAll(".faq-card");
+
+  faqCards.forEach(card => {
+    const question = card.querySelector("h4");
+    question.addEventListener("click", () => {
+      // Collapse all other open cards
+      faqCards.forEach(c => {
+        if (c !== card) c.classList.remove("active");
+      });
+      // Toggle the clicked one
+      card.classList.toggle("active");
+    });
+  });
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const track = document.querySelector(".testimonial-track");
+  const slides = document.querySelectorAll(".testimonial-card");
+  const prev = document.querySelector(".arrow.left");
+  const next = document.querySelector(".arrow.right");
+
+  let index = 0;
+  const total = slides.length;
+
+  function showSlide(i) {
+    index = (i + total) % total;
+    track.style.transform = `translateX(-${index * 100}%)`;
+  }
+
+  function nextSlide() { showSlide(index + 1); }
+  function prevSlide() { showSlide(index - 1); }
+
+  next.addEventListener("click", nextSlide);
+  prev.addEventListener("click", prevSlide);
+
+  // Auto slide every 5 seconds
+  let autoSlide = setInterval(nextSlide, 5000);
+
+  // Pause auto on hover
+  document.querySelector(".testimonial-slider").addEventListener("mouseenter", () => clearInterval(autoSlide));
+  document.querySelector(".testimonial-slider").addEventListener("mouseleave", () => autoSlide = setInterval(nextSlide, 5000));
+});
+
+
+(function(){
+  const viewport = document.querySelector('.t-viewport');
+  const track    = document.querySelector('.t-track');
+  const prevBtn  = document.querySelector('.t-arrow.prev');
+  const nextBtn  = document.querySelector('.t-arrow.next');
+
+  let slides   = Array.from(track.children);
+  let index    = 0;
+  let isAnimating = false;
+  const gapPx  = 24;
+  const intervalMs = 4000;
+
+  // Determine how many cards are visible (1 on mobile, 2 on desktop)
+  function visibleCount(){
+    return window.matchMedia('(max-width: 900px)').matches ? 1 : 2;
+  }
+
+  // Prepare infinite: clone first (visibleCount + 2) slides to the end
+  function primeClones(){
+    // remove old clones first
+    Array.from(track.querySelectorAll('.t-clone')).forEach(n => n.remove());
+    const vc = visibleCount();
+    const cloneN = Math.min(slides.length, vc + 2);
+    for(let i=0;i<cloneN;i++){
+      const c = slides[i].cloneNode(true);
+      c.classList.add('t-clone');
+      track.appendChild(c);
+    }
+    slides = Array.from(track.children);
+  }
+
+  function cardWidth(){
+    // card width + gap
+    const vc = visibleCount();
+    const vpW = viewport.clientWidth;
+    if(vc === 1) return vpW; // 100%
+    // (100% - gap)/2
+    return (vpW - gapPx) / 2;
+  }
+
+  function goTo(newIndex, withTransition = true){
+    if(isAnimating) return;
+    isAnimating = true;
+
+    const shift = -newIndex * (cardWidth() + gapPx);
+    track.style.transition = withTransition ? 'transform .45s ease' : 'none';
+    track.style.transform  = `translateX(${shift}px)`;
+
+    track.addEventListener('transitionend', onDone, { once: true });
+    if(!withTransition) isAnimating = false;
+
+    function onDone(){
+      // If we moved beyond the last real slide, snap back
+      const vc = visibleCount();
+      const maxRealIndex = document.querySelectorAll('.t-track > :not(.t-clone)').length - vc;
+      if(newIndex > maxRealIndex){
+        index = 0;
+        const snap = -index * (cardWidth() + gapPx);
+        track.style.transition = 'none';
+        track.style.transform  = `translateX(${snap}px)`;
+      } else {
+        index = newIndex;
+      }
+      isAnimating = false;
     }
   }
 
-  function normalSubmit(e) {
-    if (submitting) {
-      e.preventDefault();
-      return;
+  function next(){ goTo(index + 1); }
+  function prev(){
+    if(isAnimating) return;
+    const vc = visibleCount();
+    const realCount = document.querySelectorAll('.t-track > :not(.t-clone)').length;
+    if(index === 0){
+      // jump to the last visible start, then animate back one
+      const maxStart = Math.max(0, realCount - vc);
+      const jump = -maxStart * (cardWidth() + gapPx);
+      track.style.transition = 'none';
+      track.style.transform  = `translateX(${jump}px)`;
+      index = maxStart;
+      requestAnimationFrame(()=> requestAnimationFrame(()=> goTo(index - 1)));
+    }else{
+      goTo(index - 1);
     }
-    if (!validate()) {
-      e.preventDefault();
-      return;
-    }
-    submitting = true;
-    setLoading(true);
-    // Let the browser POST normally; redirect will happen via server.
   }
 
-  form.addEventListener("submit", (e) => {
-    if (USE_FETCH_SUBMIT) return fetchSubmit(e);
-    return normalSubmit(e);
+  // Auto-play (pause on hover/focus)
+  let timer = null;
+  function start(){ stop(); timer = setInterval(next, intervalMs); }
+  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+
+  viewport.addEventListener('mouseenter', stop);
+  viewport.addEventListener('mouseleave', start);
+  viewport.addEventListener('focusin', stop);
+  viewport.addEventListener('focusout', start);
+
+  nextBtn.addEventListener('click', next);
+  prevBtn.addEventListener('click', prev);
+  window.addEventListener('resize', ()=>{
+    // Re-prime on layout change
+    primeClones();
+    goTo(index, false);
   });
 
-  // Reset on BFCache/back button
-  window.addEventListener("pageshow", () => {
-    submitting = false;
-    setLoading(false);
-  });
+  // Init
+  primeClones();
+  goTo(0, false);
+  start();
 })();

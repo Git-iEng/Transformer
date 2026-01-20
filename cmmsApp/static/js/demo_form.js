@@ -376,8 +376,7 @@ const COUNTRIES = [
 
     return true;
   }
-
-  // Prevent double-binding if script is included twice
+// Prevent double-binding if script is included twice
 if (form.dataset.boundSubmit === "1") return;
 form.dataset.boundSubmit = "1";
 
@@ -394,57 +393,81 @@ form.addEventListener("submit", async (e) => {
   submitting = true;
   setLoading(true);
 
+  // Safety timeout so button never stays loading forever
+  const safetyTimer = setTimeout(() => {
+    if (submitting) {
+      showToast("Taking too long. Please try again.", "error");
+      resetSubmitState();
+    }
+  }, 15000);
+
   try {
     const res = await fetch(form.action, {
       method: "POST",
       body: new FormData(form),
       headers: { "X-Requested-With": "XMLHttpRequest" },
       credentials: "same-origin",
+      redirect: "follow",
     });
 
-    // Handle non-JSON responses safely (like 302 HTML)
-    let data = {};
+    // If backend sends a redirect (302 -> thank you page), fetch will follow it
+    // and we will get HTML. In that case just navigate to res.url
     const ct = (res.headers.get("content-type") || "").toLowerCase();
+
+    // Case 1: JSON response (your desired AJAX format)
     if (ct.includes("application/json")) {
-      data = await res.json();
-    } else if (res.redirected) {
-      window.location.href = res.url;
-      return;
-    } else {
-      // If server returned HTML by mistake, treat as error
-      showToast("Server response was not JSON. Please refresh and try again.", "error");
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok || !data.ok) {
+        const errors = data.errors || {};
+        Object.keys(errors).forEach((k) => err(k, errors[k]));
+        showToast("Please fix the errors and try again.", "error");
+        return;
+      }
+
+      // Success: close modal, reset, then go to thanks
+      form.reset();
+      clearErr();
+      modal.classList.remove("is-open");
+
+      const redirectUrl =
+        data.redirect ||
+        form.querySelector('input[name="next"]')?.value ||
+        "/thanks/";
+
+      // Use assign so it creates history entry (so you can go back to previous page)
+      window.location.assign(redirectUrl);
       return;
     }
 
-    if (!res.ok || !data.ok) {
-      const errors = data.errors || {};
-      Object.keys(errors).forEach((k) => err(k, errors[k]));
-      showToast("Please fix the errors and try again.", "error");
+    // Case 2: HTML response (usually because Django returned a normal redirect page)
+    // If res.ok and we got HTML, navigate to the final URL (likely thank-you page)
+    if (res.ok) {
+      form.reset();
+      clearErr();
+      modal.classList.remove("is-open");
+      window.location.assign(res.url);
       return;
     }
 
-    // Success
-    form.reset();
-    clearErr();
-    modal.classList.remove("is-open");
-
-    const redirectUrl =
-      data.redirect ||
-      form.querySelector('input[name="next"]')?.value ||
-      "/thanks/";
-
-    window.location.href = redirectUrl;
+    // Otherwise error
+    showToast("Server error. Please try again.", "error");
 
   } catch (ex) {
     showToast("Network error. Please try again.", "error");
   } finally {
-    // Always stop spinner if we did not navigate
-    resetSubmitState();
+    clearTimeout(safetyTimer);
+    resetSubmitState(); // ALWAYS stop spinner
   }
 });
 
-  // Reset when user returns (back button / bfcache)
-  window.addEventListener("pageshow", () => {
-    resetSubmitState();
-  });
+// Reset when user returns (back button / bfcache)
+window.addEventListener("pageshow", () => {
+  // remove loading state always
+  resetSubmitState();
+  // also reset form so it is fresh when user returns from thanks page
+  form.reset();
+  clearErr();
+});
+
 })();
