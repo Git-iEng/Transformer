@@ -1,12 +1,3 @@
-html,
-body {
-  margin: 0;
-  /* remove default 8px margin that causes scroll with full-bleed rows */
-  padding: 0;
-  width: 100%;
-  overflow-x: hidden;
-  /* belt-and-suspenders: stop any stray overflow */
-}
 
 /* ============= THEME TOKENS ============= */
 :root {
@@ -21,7 +12,7 @@ body {
   --radius-xxl-solar: 22px;
   --shadow-soft-solar: 0 10px 30px rgba(0, 0, 0, .08);
   --container-w-solar: 1200px;
-  --header-h-solar: 72px;
+  --header-h-solar: 75px;
   
   /* for scroll-margin if needed */
 }
@@ -655,7 +646,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--ink-lv);
+  color: var(--muted-solar);
   font-weight: 600;
 }
 
@@ -785,7 +776,7 @@ body {
   overflow: clip;
 
   /* set your background image here (no inline styles) */
-  background-image: url("../images/types-banner.avif");
+  background-image: url("../images/typesback.avif");
   background-size: cover;
   background-position: center right;
   /* give the band a stable minimum height without capping large screens */
@@ -2089,167 +2080,6 @@ body.modal-open {
   }
 }
 
-/* Container for the entire section */
-.-gemini-mission-section {
-  /* font-family: Arial, sans-serif; */
-  max-width: 1100px;
-  margin: 0 auto;
-  /* padding: 20px; */
-}
-
-/* Tab buttons container */
-.-gemini-tabs-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  /* background-color: #f0f0f0; */
-  border-radius: 50px;
-  padding: 5px;
-  /* margin-bottom: 30px; */
-  width: fit-content;
-}
-
-/* Individual tab button styling */
-.-gemini-tab {
-  background-color: transparent;
-  border: none;
-  padding: 12px 24px;
-  margin: 0 4px;
-  border-radius: 50px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-/* Active (selected) tab state */
-.-gemini-tab.active {
-  background-color: #e0e0e0; 
-  color: #000;
-  font-weight: bold;
-}
-
-
-/* Individual content blocks (hidden by default) */
-.-gemini-content {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-}
-
-/* Active content block (visible) */
-.-gemini-content.active {
-  display: flex;
-  flex-direction: column; /* Default for smaller screens */
-  gap: 40px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Layout for wider screens */
-@media (min-width: 768px) {
-  .-gemini-content.active {
-    flex-direction: row; /* Side-by-side on desktop */
-  }
-}
-
-/* Text and image containers */
-.-gemini-text-content,
-.-gemini-image-content {
-  flex: 1;
-}
-
-.-gemini-text-content h2 {
-  font-size: 48px;
-  color: #0d2847;
-  margin-bottom: 20px;
-}
-
-.-gemini-text-content p {
-  font-size: 8px;
-  line-height: 1.6;
-
-  color:  #6a7a89;
-
-   /* text-align: justify; */
-    /* margin-bottom: 40px; */
-    margin: 0;
-    font: 400 15px/1.7 ui-sans-serif, system-ui;
-
-}
-
-.-gemini-image-content img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 8px;
-}
-/* Individual content blocks (hidden by default) */
-.-gemini-content {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-  align-items: center; /* Vertically align items when side-by-side */
-}
-
-/* Active content block (visible) */
-.-gemini-content.active {
-  display: flex;
-  flex-direction: column; /* Default for smaller screens */
-  gap: 40px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Layout for wider screens */
-@media (min-width: 768px) {
-  .-gemini-content.active {
-    flex-direction: row; /* Side-by-side on desktop */
-  }
-}
-
-/* Text and image containers */
-.-gemini-text-content {
-  flex: 1; /* Allow text content to take available space */
-}
-
-.-gemini-image-content {
-  flex: 1; /* Allow image content to take available space */
-  display: flex; /* Use flexbox to center the image */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  padding: 20px; /* Add some padding around the image if desired */
-}
-
-
-.-gemini-text-content h2 {
-  font-size: 48px;
-  color: #0d2847;
-  margin-bottom: 20px;
-}
-
-.-gemini-text-content p {
-  font-size: 18px;
-  line-height: 1.6;
-  color: #555;
-}
-
-.-gemini-image-content img {
-  /* --- MODIFIED SECTION --- */
-  width: 100%; /* Keep it responsive within its constrained size */
-  /* Adjust this value to control the maximum image width */
-  
-  height: 300px;
-  max-width: auto;
-  display: block;
-  border-radius: 8px;
-  /* ---------------------- */
-}
-/* */
-
 
 /* ---------- Light theme with orange accents ---------- */
 :root{
@@ -2408,222 +2238,6 @@ body.modal-open {
 /* Keep the year pill positioned nicely on taller images */
 .lv-electric-panel-project .lv-epp-year{
   inset: 12px auto auto 12px;
-}
-
-/* Container for the entire section */
-.-gemini-mission-section {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-/* Tab buttons container */
-.-gemini-tabs-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  border-radius: 50px;
-  padding: 5px;
-  width: fit-content;
-}
-
-/* Individual tab button styling */
-.-gemini-tab {
-  background-color: transparent;
-  border: none;
-  padding: 12px 24px;
-  margin: 0 4px;
-  border-radius: 50px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-/* Active (selected) tab state */
-.-gemini-tab.active {
-  background-color: #e0e0e0;
-  color: #000;
-  font-weight: 600;
-}
-
-
-
-/* Content blocks (default hidden) */
-.-gemini-content {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-  align-items: center;
-}
-
-/* Active content block (visible) */
-.-gemini-content.active {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (min-width: 768px) {
-  .-gemini-content.active {
-    flex-direction: row;
-  }
-}
-
-/* Text + image columns */
-.-gemini-text-content,
-.-gemini-image-content {
-  flex: 1;
-}
-
-/* Headings in this section – keep same style as about section title style */
-.-gemini-text-content h2 {
-  font-size: 48px;
-  color: #0d2847;
-  margin-bottom: 20px;
-}
-
-/* UPDATED: paragraph style to match "about us" paragraph */
-.-gemini-text-content p {
-  font: 400 15px/1.7 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #6a7a89;
-  margin: 0;
-}
-
-/* Image block */
-.-gemini-image-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.-gemini-image-content img {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  border-radius: 8px;
-}
-/* Container for the entire section */
-.-gemini-mission-section {
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-/* Tab buttons container */
-.-gemini-tabs-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  border-radius: 50px;
-  padding: 5px;
-  width: fit-content;
-}
-
-/* Individual tab button styling */
-.-gemini-tab {
-  background-color: transparent;
-  border: none;
-  padding: 12px 24px;
-  margin: 0 4px;
-  border-radius: 50px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #333;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-/* Active (selected) tab state */
-.-gemini-tab.active {
-  background-color: #e0e0e0;
-  color: #000;
-  font-weight: 600;
-}
-
-
-/* Content blocks (default hidden) */
-.-gemini-content {
-  display: none;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-  align-items: center;
-}
-
-/* Active content block (visible) */
-.-gemini-content.active {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (min-width: 768px) {
-  .-gemini-content.active {
-    flex-direction: row;
-  }
-}
-
-/* Text + image columns */
-.-gemini-text-content,
-.-gemini-image-content {
-  flex: 1;
-}
-
-/* Headings in this section – keep same style as about section title style */
-.-gemini-text-content h2 {
-  font-size: 48px;
-  color: #0d2847;
-  margin-bottom: 20px;
-}
-
-/* UPDATED: paragraph style to match "about us" paragraph */
-.-gemini-text-content p {
-  font: 400 15px/1.7 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #6a7a89;
-  margin: 0;
-}
-
-/* Image block */
-.-gemini-image-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.-gemini-image-content img {
-  width: 100%;
-  max-width: 480px;
-  height: auto;
-  border-radius: 8px;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .grid-solutions-solar-system-solution {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .solutions-head-solar-system-solution {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .solutions-viewall-btn-solar-system-solution {
-    justify-self: start;
-  }
-}
-
-@media (max-width: 560px) {
-  .grid-solutions-solar-system-solution {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Container for the entire section */
@@ -2833,3 +2447,398 @@ body.modal-open {
     display: block;
   }
 }
+/* ================== SOLUTIONS ================== */
+.section-solutions-solar-system-solution{
+  background: var(--bg-solar);
+  padding: clamp(48px, 2vw, 40px) 0;
+}
+.solutions-subtitle-solar-system-solution{
+color: var(--muted-solar);
+  margin: 0 0 26px;
+  font-size: clamp(15px, 1.8vw, 18px);
+}
+.solutions-head-solar-system-solution{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: end;
+  margin-bottom: clamp(18px, 1vw, 28px);
+}
+
+.solutions-kicker-solar-system-solution{
+  color: var(--teal-700-solar);
+  font-weight: 800;
+  letter-spacing: .4px;
+  margin: 0 0 6px;
+}
+
+.solutions-title-solar-system-solution{
+  margin: 0;
+  color: var(--ink-solar);
+  font-weight: 800;
+  font-size: clamp(22px, 3.6vw, 34px);
+}
+
+.solutions-viewall-btn-solar-system-solution{
+  justify-self: end;
+  padding: 10px 14px;
+  font-weight: 600;
+  border: 2px solid var(--teal-700-solar);
+  color: var(--teal-700-solar);
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.solutions-viewall-btn-solar-system-solution:hover{
+  background: var(--teal-700-solar);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Grid – DESKTOP: 3 cards per row */
+.grid-solutions-solar-system-solution{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 3vw, 24px);
+}
+
+/* Show only first row by default (3 cards) */
+.grid-solutions-solar-system-solution.is-collapsed-solar-system-solution
+.extra-card-solar-system-solution{
+  display: none;
+}
+
+/* Card */
+.card-solar-system-solution{
+  background: #fff;
+  border: 1px solid rgba(21,94,117,.18);
+  border-radius: 14px;
+  padding: clamp(14px, 2.6vw, 18px);
+  box-shadow: var(--shadow-soft-solar);
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.card-solar-system-solution:hover{
+  border-color: var(--teal-700-solar);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0,0,0,.08);
+}
+
+.card-icon-solar-system-solution{
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--teal-700-solar), var(--cyan-800-solar));
+  margin-bottom: 10px;
+  box-shadow: 0 10px 22px rgba(15,118,110,.25);
+}
+.card-icon-solar-system-solution i{
+  font-size: 22px;
+  line-height: 1;
+}
+
+.card-title-solar-system-solution{
+  margin: 0 0 6px;
+  font-size: clamp(16px, 2.2vw, 18px);
+  font-weight: 800;
+  color: var(--ink-solar);
+}
+.card-text-solar-system-solution{
+  margin: 0 0 12px;
+  color: var(--muted-solar);
+  line-height: 1.65;
+  font-size: clamp(13.5px, 1.9vw, 15px);
+}
+
+/* Link CTA pinned to bottom */
+.card-link-solar-system-solution{
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--cyan-800-solar);
+  color: var(--cyan-800-solar);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.card-link-solar-system-solution:hover{
+  background: var(--cyan-800-solar);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+/* Reveal directions (slow) */
+.reveal-left-solar-system-solution,
+.reveal-right-solar-system-solution,
+.reveal-top-solar-system-solution,
+.reveal-bottom-solar-system-solution{
+  opacity: 0;
+  transform: translate3d(0,0,0);
+  transition: opacity 1.05s cubic-bezier(.2,.65,.2,1),
+              transform 1.05s cubic-bezier(.2,.65,.2,1);
+  will-change: opacity, transform;
+}
+.reveal-left-solar-system-solution{  transform: translateX(-26px); }
+.reveal-right-solar-system-solution{ transform: translateX( 26px); }
+.reveal-top-solar-system-solution{   transform: translateY(-26px); }
+.reveal-bottom-solar-system-solution{transform: translateY( 26px); }
+
+.in-view-solar-system.reveal-left-solar-system-solution,
+.in-view-solar-system.reveal-right-solar-system-solution,
+.in-view-solar-system.reveal-top-solar-system-solution,
+.in-view-solar-system.reveal-bottom-solar-system-solution{
+  opacity: 1;
+  transform: none;
+}
+
+/* ================== SOLUTIONS (RESPONSIVE OVERRIDES ONLY) ================== */
+
+/* Tablet / small desktop: go to 2 cards per row */
+@media (max-width: 992px){
+  .grid-solutions-solar-system-solution{
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .solutions-head-solar-system-solution{
+    align-items: start;
+  }
+}
+
+/* Mobile: stack header + 1 card per row */
+@media (max-width: 640px){
+  .section-solutions-solar-system-solution{
+    padding: 40px 0; /* keep your style, just tighter on mobile */
+  }
+
+  .solutions-head-solar-system-solution{
+    grid-template-columns: 1fr;   /* stacks title + button */
+    gap: 12px;
+    align-items: start;
+  }
+
+  .solutions-viewall-btn-solar-system-solution{
+    justify-self: start;          /* avoids awkward right alignment */
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .grid-solutions-solar-system-solution{
+    grid-template-columns: 1fr;   /* single column cards */
+    gap: 14px;
+  }
+
+  .card-solar-system-solution{
+    min-height: auto;             /* prevents weird stretching on narrow screens */
+  }
+
+  .card-text-solar-system-solution{
+    margin-bottom: 10px;
+  }
+}
+
+/* Very small phones: reduce internal spacing a touch */
+@media (max-width: 380px){
+  .card-solar-system-solution{
+    padding: 14px;
+  }
+
+  .solutions-viewall-btn-solar-system-solution{
+    padding: 10px 12px;
+  }
+}
+
+
+
+/* ============= SECTION WRAPPER ============= */
+.section-generator-services{
+  background: var(--bg-solar);
+  color: var(--ink-solar);
+  padding: clamp(28px, 6vw, 72px) 16px;
+  scroll-margin-top: calc(var(--header-h-solar) + 12px);
+}
+
+.container-generator-services{
+  width: min(100%, var(--container-w-solar));
+  margin-inline: auto;
+}
+
+/* ============= HEADER ============= */
+.head-generator-services{
+  max-width: 980px;
+  margin: 0 0 clamp(20px, 4vw, 36px);
+}
+
+.kicker-generator-services{
+  margin: 0 0 .5rem;
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: .2px;
+  color: var(--teal-700-solar);
+}
+
+.title-generator-services{
+  margin: 0 0 .6rem;
+  font-size: clamp(1.6rem, 4.6vw, 2.4rem);
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.lead-generator-services{
+  margin: 0;
+  color: var(--muted-solar);
+  line-height: 1.7;
+  font-size: clamp(.98rem, 1.8vw, 1.06rem);
+}
+
+/* ============= GRID ============= */
+.services-grid-generator-services{
+  list-style: none;
+  padding: 0;
+  margin: clamp(18px, 4vw, 28px) 0 0;
+  display: grid;
+  gap: clamp(14px, 2.2vw, 22px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 980px){
+  .services-grid-generator-services{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px){
+  .services-grid-generator-services{ grid-template-columns: 1fr; }
+}
+
+/* ============= CARDS ============= */
+.service-card-generator-services{
+  background: linear-gradient(180deg, #fff, #f8fbff);
+  border: 1px solid rgba(15,27,42,.10);
+  border-radius: 16px;
+  padding: clamp(14px, 2.4vw, 18px);
+  box-shadow: var(--shadow-soft-solar);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.service-card-generator-services:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 16px 42px rgba(0,0,0,.10);
+}
+
+.icon-generator-services{
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--teal-700-solar), var(--cyan-800-solar));
+  box-shadow: inset 0 0 0 4px rgba(255,255,255,.55);
+  margin-bottom: .5rem;
+  font-size: 20px;
+}
+
+.service-title-generator-services{
+  margin: .1rem 0 .3rem;
+  font-weight: 900;
+  font-size: clamp(1.02rem, 1.6vw, 1.18rem);
+}
+
+.service-text-generator-services{
+  margin: 0;
+  color: var(--muted-solar);
+  line-height: 1.65;
+}
+section[id]{ scroll-margin-top: var(--header-h-solar); }
+
+
+.svc-detail-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  /* image | text */
+  gap: 20px;
+  /* small gap between image and text */
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  /* remove all outer padding */
+  background: transparent;
+}
+
+/* IMAGE CONTAINER */
+.svc-detail-figure {
+  margin: 0;
+  padding: 0;
+  /* remove internal padding */
+  border: none;
+  background: transparent;
+  /* no background box */
+  border-radius: 0;
+  /* sharp edges */
+  overflow: hidden;
+}
+
+/* IMAGE */
+.svc-detail-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  /* show full switchboard */
+  object-position: center;
+  border-radius: 0;
+}
+
+/* TEXT */
+.svc-detail-copy {
+  margin: 0;
+  padding: 0;
+}
+
+.svc-detail-copy h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 800;
+  color: var(--ink-lv, #111827);
+}
+
+.svc-detail-copy p {
+  margin: 8px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted-lv, #374151);
+}
+
+.svc-detail-copy h4 {
+  margin: 16px 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-lv, #111827);
+}
+
+.svc-detail-copy ul {
+  margin: 8px 0 12px 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-lv, #111827);
+}
+
+/* MOBILE STACK */
+@media (max-width: 900px) {
+  .svc-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .svc-detail-img {
+    max-height: 360px;
+  }
+}
+

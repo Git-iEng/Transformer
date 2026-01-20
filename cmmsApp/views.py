@@ -91,7 +91,8 @@ def _send_email(subject: str, text_body: str, html_body: str | None, recipients:
 
 def _send_demo_email_async(subject: str, text_body: str, html_body: str | None = None):
     recipients = getattr(settings, "DEMO_RECIPIENTS", None) or getattr(settings, "CONTACT_RECIPIENTS", None)
-    _send_email(subject, text_body, html_body, recipients)
+    Thread(target=_send_email, args=(subject, text_body, html_body, recipients), daemon=True).start()
+
 
 def _send_contact_email_async(subject: str, text_body: str, html_body: str | None = None):
     """Fire-and-forget email for Contact form."""
@@ -102,10 +103,9 @@ def request_demo_view(request):
         return redirect("/")
 
     # detect ajax/fetch
-    wants_json = (
-        request.headers.get("x-requested-with") == "XMLHttpRequest"
-        or "application/json" in (request.headers.get("accept") or "")
-    )
+
+    wants_json = request.headers.get("x-requested-with") == "XMLHttpRequest"
+     
 
     full_name = request.POST.get("full_name", "").strip()
     company   = request.POST.get("company", "").strip()

@@ -376,57 +376,72 @@ const COUNTRIES = [
 
     return true;
   }
-  // ---------------- SINGLE submit handler (AJAX) ----------------
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault(); // IMPORTANT: stop normal POST
 
-    if (submitting) return;
+  // Prevent double-binding if script is included twice
+if (form.dataset.boundSubmit === "1") return;
+form.dataset.boundSubmit = "1";
 
-    if (!validate()) {
-      resetSubmitState();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  if (submitting) return;
+
+  if (!validate()) {
+    resetSubmitState();
+    return;
+  }
+
+  submitting = true;
+  setLoading(true);
+
+  try {
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: new FormData(form),
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      credentials: "same-origin",
+    });
+
+    // Handle non-JSON responses safely (like 302 HTML)
+    let data = {};
+    const ct = (res.headers.get("content-type") || "").toLowerCase();
+    if (ct.includes("application/json")) {
+      data = await res.json();
+    } else if (res.redirected) {
+      window.location.href = res.url;
+      return;
+    } else {
+      // If server returned HTML by mistake, treat as error
+      showToast("Server response was not JSON. Please refresh and try again.", "error");
       return;
     }
 
-    submitting = true;
-    setLoading(true);
-
-    try {
-      const formData = new FormData(form);
-
-      const res = await fetch(form.action, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "X-Requested-With": "XMLHttpRequest"
-        },
-        credentials: "same-origin"
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok || !data.ok) {
-        // show field errors if provided by server
-        const errors = data.errors || {};
-        Object.keys(errors).forEach((k) => err(k, errors[k]));
-        showToast("Please fix the errors and try again.", "error");
-        resetSubmitState();
-        return;
-      }
-
-      // Success: close modal, reset form, then redirect
-      form.reset();
-      clearErr();
-      modal.classList.remove("is-open");
-      resetSubmitState();
-
-      const redirectUrl = data.redirect || (form.querySelector('input[name="next"]')?.value || "/thanks/");
-      window.location.href = redirectUrl;
-
-    } catch (ex) {
-      showToast("Network error. Please try again.", "error");
-      resetSubmitState();
+    if (!res.ok || !data.ok) {
+      const errors = data.errors || {};
+      Object.keys(errors).forEach((k) => err(k, errors[k]));
+      showToast("Please fix the errors and try again.", "error");
+      return;
     }
-  });
+
+    // Success
+    form.reset();
+    clearErr();
+    modal.classList.remove("is-open");
+
+    const redirectUrl =
+      data.redirect ||
+      form.querySelector('input[name="next"]')?.value ||
+      "/thanks/";
+
+    window.location.href = redirectUrl;
+
+  } catch (ex) {
+    showToast("Network error. Please try again.", "error");
+  } finally {
+    // Always stop spinner if we did not navigate
+    resetSubmitState();
+  }
+});
 
   // Reset when user returns (back button / bfcache)
   window.addEventListener("pageshow", () => {
