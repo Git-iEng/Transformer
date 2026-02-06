@@ -17,9 +17,7 @@ urlpatterns = [
     # Thanks page (use ONE route + ONE name)
     path("thanks/", views.contact_thanks, name="contact_thanks"),
 
-    # Downloads
-    path("request-download/", views.request_download, name="request_download"),
-    path("download/", views.download_file, name="download_file"),
+   
 
     # Consulting block form + helper endpoints
     path("contact/submit/", views.contact_block_submit, name="contact_submit"),

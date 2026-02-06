@@ -28,38 +28,6 @@ from .utils_contact import normalize_phone_and_country, country_name_from_alpha2
 NAME_RE  = re.compile(r"^[A-Za-z\s'.-]{2,}$")
 PHONE_RE = re.compile(r"^\+?\d[\d\s\-()]{6,}$")
 
-# ---------- Excel paths ----------
-# EXCEL_DIR  = os.path.join(settings.BASE_DIR, "data")
-# EXCEL_PATH = os.path.join(EXCEL_DIR, "carl_demo_requests.xlsx")
-
-
-
-def _static_abs_path(relpath: str) -> str | None:
-    """Return absolute path of a static file using Django's staticfiles finders, or None."""
-    return finders.find(relpath)
-
-
-# def _append_to_excel(row):
-#     """Create/append to the Request Demo workbook."""
-#     os.makedirs(EXCEL_DIR, exist_ok=True)
-#     if os.path.exists(EXCEL_PATH):
-#         wb = load_workbook(EXCEL_PATH)
-#         ws = wb.active
-#     else:
-#         wb = Workbook()
-#         ws = wb.active
-#         ws.title = "Requests"
-#         headers = [
-#             "Timestamp", "Full Name", "Company", "Email",
-#             "Country", "Dial Code", "Phone", "Address",
-#             "Message", "Source IP",
-#         ]
-#         ws.append(headers)
-#         for i in range(1, len(headers) + 1):
-#             ws.column_dimensions[get_column_letter(i)].width = 24
-#     ws.append(row)
-#     wb.save(EXCEL_PATH)
-
 
 # ---------- Email helpers ----------
 def _send_email(subject: str, text_body: str, html_body: str | None, recipients: list[str] | None):
@@ -98,6 +66,7 @@ def _send_contact_email_async(subject: str, text_body: str, html_body: str | Non
     """Fire-and-forget email for Contact form."""
     recipients = getattr(settings, "CONTACT_RECIPIENTS", None)
     Thread(target=_send_email, args=(subject, text_body, html_body, recipients), daemon=True).start()
+
 def request_demo_view(request):
     if request.method != "POST":
         return redirect("/")
@@ -214,25 +183,6 @@ def contact_section(request):
             cd.get("phone", ""), cd.get("country", "")
         )
 
-        # # Append to Excel
-        # xlsx_path = Path(
-        #     getattr(settings, "CONTACT_SUBMISSIONS_XLSX", Path(settings.BASE_DIR) / "contact_submissions.xlsx")
-        # # )
-        # append_submission_xlsx(
-        #     xlsx_path,
-        #     [
-        #         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        #         cd["first_name"],
-        #         cd.get("last_name", ""),
-        #         cd.get("company", ""),
-        #         cd["email"],
-        #         resolved_alpha2,
-        #         resolved_country_name,
-        #         e164_phone or cd.get("phone", ""),
-        #         cd.get("message", ""),
-        #     ],
-        # )
-
         # Email body
         subject = "New website contact submission for Transformer Inquiry"
         text_body = "\n".join(
@@ -338,27 +288,6 @@ def contact_block_submit(request):
     e164_phone, alpha2, country_name = normalize_phone_and_country(phone, country)
     dial_code = _dial_code_from_alpha2(alpha2)
 
-    # # --- Append to Excel ---
-    # xlsx_path = Path(getattr(settings, "CONTACT_SUBMISSIONS_XLSX",
-    #                          Path(settings.BASE_DIR) / "contact_submissions.xlsx"))
-    # # Be liberal with columns; utils will just append the row.
-    # append_submission_xlsx(
-    #     xlsx_path,
-    #     [
-    #         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    #         name,
-    #         email,
-    #         e164_phone or phone,
-    #         alpha2,
-    #         country_name,
-    #         dial_code,
-    #         service,
-    #         message,
-    #         request.META.get("REMOTE_ADDR", ""),
-    #         request.META.get("HTTP_REFERER", ""),
-    #     ],
-    # )
-
     # --- Email notification ---
     subject = f"[Website] Consulting request: {name} – {service or 'General'}"
     text_body = "\n".join([
@@ -381,19 +310,7 @@ def contact_block_submit(request):
     messages.success(request, "Thanks! Your request was submitted successfully.")
     return redirect(reverse("cmmsApp:contact_thanks"))
 
-def neplan_electricity(request):
-    # Build once here
-    countries = []
-    for c in pycountry.countries:
-        try:
-            cc = phonenumbers.country_code_for_region(c.alpha_2)
-        except Exception:
-            cc = None
-        if cc:
-            countries.append({"alpha2": c.alpha_2, "name": c.name, "dial": f"+{cc}"})
-    countries.sort(key=lambda x: x["name"])
 
-    return render(request, "neplan-electricity.html", {"countries": countries})
 
 
 def country_list(request):
@@ -412,93 +329,3 @@ def contact_thanks(request):
     return render(request, "contact_thanks.html", {})
 
 
-
-
-# --- imports you need at the top of views.py ---
-
-# (and your other imports… NAME_RE, validate_email, etc.)
-
-# ---------- Downloads config ----------
-DOWNLOAD_DIR = Path(__file__).resolve().parent / "downloads"
-
-_DASHES_RE = re.compile(r"[\u2010-\u2015\u2212]+")
-_SPACES_RE = re.compile(r"\s+")
-def _norm_key(s: str) -> str:
-    s = (s or "").strip().lower()
-    s = _DASHES_RE.sub("-", s)
-    s = _SPACES_RE.sub(" ", s)
-    return s
-
-DOC_REGISTRY = {
-    _norm_key("Australia User Manual Revision"): DOWNLOAD_DIR / "australia-user-manual-revision.pdf",
-    _norm_key("Energy Storage Converter 100kW—OS Edition Specification Sheet – 20250826"):
-        DOWNLOAD_DIR / "energy-storage-converter-100kw-os-edition-specification-sheet-20250826.pdf",
-    _norm_key("Warranty"): DOWNLOAD_DIR / "warranty.pdf",
-}
-
-def _sign_download_payload(path: str, download_name: str, ttl_seconds: int = 900) -> str:
-    payload = {"p": str(path), "n": download_name, "ts": timezone.now().timestamp()}
-    token = signing.dumps(payload, salt="dl1")
-    return reverse("cmmsApp:download_file") + f"?token={token}"
-
-@require_POST
-def request_download(request):
-    name    = (request.POST.get("name") or "").strip()
-    email   = (request.POST.get("email") or "").strip()
-    doc_raw = (request.POST.get("docName") or "").strip()
-    doc_key = _norm_key(doc_raw)
-
-    errs = []
-    if not name or not NAME_RE.match(name): errs.append("Please enter a valid full name.")
-    try:
-        validate_email(email)
-    except ValidationError:
-        errs.append("Enter a valid email address.")
-    if doc_key not in DOC_REGISTRY:
-        errs.append(f"Unknown document: {doc_raw}")
-
-    if errs:
-        return JsonResponse({"ok": False, "error": " ".join(errs)}, status=400)
-
-    file_path = Path(DOC_REGISTRY[doc_key])
-    try:
-        file_path.resolve().relative_to(DOWNLOAD_DIR.resolve())
-    except Exception:
-        return JsonResponse({"ok": False, "error": "Invalid file location."}, status=400)
-    if not file_path.exists():
-        return JsonResponse({"ok": False, "error": f"File not found on server: {file_path.name}"}, status=404)
-
-    # optional email notify using your helper
-    subject = f"Download request: {doc_raw}"
-    text_body = f"Name: {name}\nEmail: {email}\nRequested: {doc_raw}\n"
-    _send_contact_email_async(subject, text_body, None)
-
-    download_url = _sign_download_payload(str(file_path), file_path.name)
-    return JsonResponse({"ok": True, "email": email, "doc": doc_raw, "download_url": download_url})
-
-def download_file(request):
-    token = request.GET.get("token", "")
-    if not token:
-        raise Http404()
-
-    try:
-        payload = signing.loads(token, salt="dl1", max_age=900)  # 15 min
-    except signing.SignatureExpired:
-        raise Http404("Link expired")
-    except signing.BadSignature:
-        raise Http404("Invalid link")
-
-    path = Path(payload.get("p", ""))
-    name = payload.get("n") or path.name
-
-    try:
-        path.resolve().relative_to(DOWNLOAD_DIR.resolve())
-    except Exception:
-        raise Http404("Invalid file location")
-    if not path.exists():
-        raise Http404("File missing")
-
-    ctype, _ = mimetypes.guess_type(name)
-    resp = FileResponse(open(path, "rb"), content_type=ctype or "application/octet-stream")
-    resp["Content-Disposition"] = f'attachment; filename="{name}"'
-    return resp

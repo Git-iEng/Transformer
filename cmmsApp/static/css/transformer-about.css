@@ -643,38 +643,38 @@
     /* cyan/teal */
 }
 
-.section-neplan-card-with-animation {
+.section-transformer-card-with-animation {
     padding: clamp(28px, 1vw, 32px) 16px;
     background:  #f4f7fb;
     color: var(--text);
 }
 
-.container-neplan-card-with-animation {
+.container-transformer-card-with-animation {
     max-width: 1100px;
     margin: 0 auto;
 }
 
 /* Layout: 3 columns desktop, 2 tablet, 1 mobile */
-.grid-neplan-card-with-animation {
+.grid-transformer-card-with-animation {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: clamp(16px, 2.6vw, 24px);
 }
 
 @media (max-width: 900px) {
-    .grid-neplan-card-with-animation {
+    .grid-transformer-card-with-animation {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 560px) {
-    .grid-neplan-card-with-animation {
+    .grid-transformer-card-with-animation {
         grid-template-columns: 1fr;
     }
 }
 
 /* Common card frame */
-.card-neplan-card-with-animation {
+.card-transformer-card-with-animation {
     border-radius: 18px;
     background: #fff;
     border: 1px solid var(--ring);
@@ -688,12 +688,12 @@
 }
 
 /* Image card */
-.img-card-neplan-card-with-animation {
+.img-card-transformer-card-with-animation {
     padding: 0;
     background: #e9eef6;
 }
 
-.img-card-neplan-card-with-animation img {
+.img-card-transformer-card-with-animation img {
     display: block;
     width: 100%;
     height: 100%;
@@ -702,12 +702,12 @@
 }
 
 /* Content card */
-.content-card-neplan-card-with-animation {
+.content-card-transformer-card-with-animation {
     background: var(--tile);
     padding: clamp(16px, 2.2vw, 20px);
 }
 
-.icon-neplan-card-with-animation {
+.icon-transformer-card-with-animation {
     width: 40px;
     height: 40px;
     border-radius: 12px;
@@ -720,13 +720,13 @@
     box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .5);
 }
 
-.title-neplan-card-with-animation {
+.title-transformer-card-with-animation {
     margin: 0 0 .35rem;
     font-weight: 900;
     font-size: clamp(1.05rem, 1.6vw, 1.2rem);
 }
 
-.desc-neplan-card-with-animation {
+.desc-transformer-card-with-animation {
     margin: 0;
     color: var(--muted);
     line-height: 1.6;
@@ -749,7 +749,7 @@
     --y: 26px;
 }
 
-.card-neplan-card-with-animation {
+.card-transformer-card-with-animation {
     transform: translate(var(--x, 0), var(--y, 28px)) scale(.98);
 }
 
@@ -776,12 +776,12 @@
 /* bottom-middle */
 
 /* Reveal */
-.show-neplan-card-with-animation {
-    animation: reveal-neplan-card-with-animation .7s cubic-bezier(.2, .7, .2, 1) forwards;
+.show-transformer-card-with-animation {
+    animation: reveal-transformer-card-with-animation .7s cubic-bezier(.2, .7, .2, 1) forwards;
     animation-delay: var(--delay, 0s);
 }
 
-@keyframes reveal-neplan-card-with-animation {
+@keyframes reveal-transformer-card-with-animation {
     from {
         opacity: 0;
         transform: translate(var(--x, 0), var(--y, 28px)) scale(.98);
@@ -795,18 +795,18 @@
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .card-neplan-card-with-animation {
+    .card-transformer-card-with-animation {
         opacity: 1;
         transform: none;
     }
 
-    .show-neplan-card-with-animation {
+    .show-transformer-card-with-animation {
         animation: none;
     }
 }
 
 /* Tag + title */
-.tag-neplan-testimonials {
+.tag-transformer-testimonials {
     display: inline-block;
     font-size: .78rem;
     font-weight: 800;
@@ -818,7 +818,7 @@
 }
 
 /* Tag + title */
-.tag-neplan-testimonials {
+.tag-transformer-testimonials {
     display: inline-block;
     font-size: .78rem;
     font-weight: 800;
@@ -845,19 +845,19 @@
     --wwb-shadow: 0 18px 44px rgba(2, 8, 23, .10);
 }
 
-.section-neplan-what-we-bring {
+.section-transformer-what-we-bring {
     padding: clamp(28px, 2vw, 32px) 16px;
     background: #fff;
     color: var(--wwb-text);
 }
 
-.container-neplan-what-we-bring {
+.container-transformer-what-we-bring {
     max-width: 1100px;
     margin: 0 auto;
 }
 
 /* Header */
-.eyebrow-neplan-what-we-bring {
+.eyebrow-transformer-what-we-bring {
     display: inline-flex;
     align-items: center;
     gap: .5rem;
@@ -867,7 +867,7 @@
     opacity: .85;
 }
 
-.eyebrow-neplan-what-we-bring::before {
+.eyebrow-transformer-what-we-bring::before {
     content: "";
     width: 28px;
     height: 3px;
@@ -875,7 +875,7 @@
     background: linear-gradient(90deg, var(--wwb-primary), var(--wwb-primary2));
 }
 
-.title-neplan-what-we-bring {
+.title-transformer-what-we-bring {
     margin: 0 0 1.2rem;
     font-weight: 900;
     letter-spacing: .2px;
@@ -883,7 +883,7 @@
 }
 
 /* Grid list */
-.grid-neplan-what-we-bring {
+.grid-transformer-what-we-bring {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -893,13 +893,13 @@
 }
 
 @media (max-width: 720px) {
-    .grid-neplan-what-we-bring {
+    .grid-transformer-what-we-bring {
         grid-template-columns: 1fr;
     }
 }
 
 /* Item */
-.item-neplan-what-we-bring {
+.item-transformer-what-we-bring {
     display: grid;
     grid-template-columns: 56px 1fr;
     align-items: start;
@@ -913,7 +913,7 @@
     overflow: hidden;
 }
 
-.item-neplan-what-we-bring::before {
+.item-transformer-what-we-bring::before {
     content: "";
     position: absolute;
     left: 0;
@@ -924,7 +924,7 @@
 }
 
 /* Icon */
-.icon-neplan-what-we-bring {
+.icon-transformer-what-we-bring {
     width: 44px;
     height: 44px;
     border-radius: 12px;
@@ -937,32 +937,32 @@
 }
 
 /* Text */
-.item-title-neplan-what-we-bring {
+.item-title-transformer-what-we-bring {
     margin: .15rem 0 .35rem;
     font-size: clamp(1.05rem, 1.6vw, 1.25rem);
     font-weight: 900;
 }
 
-.content-neplan-what-we-bring p {
+.content-transformer-what-we-bring p {
     margin: 0;
     line-height: 1.65;
     color: var(--wwb-muted);
 }
 
-.content-neplan-what-we-bring a {
+.content-transformer-what-we-bring a {
     color: var(--wwb-primary2);
     font-weight: 700;
     text-decoration: none;
     border-bottom: 1px solid rgba(21, 94, 117, .25);
 }
 
-.content-neplan-what-we-bring a:hover {
+.content-transformer-what-we-bring a:hover {
     border-color: transparent;
     text-decoration: underline;
 }
 
 /* Closing highlight */
-.closing-neplan-what-we-bring {
+.closing-transformer-what-we-bring {
     margin-top: clamp(18px, 1vw, 26px);
     padding: clamp(12px, 1vw, 16px) clamp(14px, 1.4vw, 18px);
     /* border: 1px dashed var(--wwb-ring); */
@@ -971,25 +971,25 @@
 }
 
 /* Subtle load-in animation */
-.item-neplan-what-we-bring {
+.item-transformer-what-we-bring {
     opacity: 0;
     transform: translateY(10px);
     animation: wwbFadeUp .6s ease forwards;
 }
 
-.item-neplan-what-we-bring:nth-child(1) {
+.item-transformer-what-we-bring:nth-child(1) {
     animation-delay: .02s;
 }
 
-.item-neplan-what-we-bring:nth-child(2) {
+.item-transformer-what-we-bring:nth-child(2) {
     animation-delay: .08s;
 }
 
-.item-neplan-what-we-bring:nth-child(3) {
+.item-transformer-what-we-bring:nth-child(3) {
     animation-delay: .14s;
 }
 
-.item-neplan-what-we-bring:nth-child(4) {
+.item-transformer-what-we-bring:nth-child(4) {
     animation-delay: .20s;
 }
 
@@ -1001,7 +1001,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .item-neplan-what-we-bring {
+    .item-transformer-what-we-bring {
         animation: none;
         opacity: 1;
         transform: none;
@@ -1067,8 +1067,8 @@
 }
 
 /* =========================================================
-   NEPLAN — Locations (cards)
-   Use with: .neplan-locations-wrap / -grid / -card / etc.
+   transformer — Locations (cards)
+   Use with: .transformer-locations-wrap / -grid / -card / etc.
    ========================================================= */
 :root {
     --nl-primary: #0f766e;
@@ -1086,7 +1086,7 @@
 }
 
 /* Wrapper */
-.neplan-locations-wrap {
+.transformer-locations-wrap {
     padding: clamp(28px, 6vw, 72px) 16px;
     background:#ffffff;
     max-width: 1120px;
@@ -1096,7 +1096,7 @@
 }
 
 /* Grid */
-.neplan-locations-grid {
+.transformer-locations-grid {
     display: grid;
     gap: clamp(14px, 2.4vw, 22px);
     grid-template-columns: repeat(3, minmax(260px, 1fr));
@@ -1104,19 +1104,19 @@
 }
 
 @media (max-width:1024px) {
-    .neplan-locations-grid {
+    .transformer-locations-grid {
         grid-template-columns: repeat(2, minmax(260px, 1fr));
     }
 }
 
 @media (max-width:620px) {
-    .neplan-locations-grid {
+    .transformer-locations-grid {
         grid-template-columns: 1fr;
     }
 }
 
 /* Card */
-.neplan-locations-card {
+.transformer-locations-card {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1130,7 +1130,7 @@
     overflow: hidden;
 }
 
-.neplan-locations-card::before {
+.transformer-locations-card::before {
     /* top accent line */
     content: "";
     position: absolute;
@@ -1141,14 +1141,14 @@
     background: linear-gradient(90deg, var(--nl-primary), var(--nl-primary-2));
 }
 
-.neplan-locations-card:hover {
+.transformer-locations-card:hover {
     transform: translateY(-6px);
     box-shadow: var(--nl-shadow-lg);
     border-color: color-mix(in oklab, var(--nl-primary) 45%, var(--nl-ring));
 }
 
 /* Header */
-.neplan-locations-header {
+.transformer-locations-header {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -1156,7 +1156,7 @@
 }
 
 /* Icon */
-.neplan-locations-icon {
+.transformer-locations-icon {
     width: 44px;
     height: 44px;
     border-radius: 12px;
@@ -1167,7 +1167,7 @@
     box-shadow: inset 0 0 0 5px rgba(255, 255, 255, .55);
 }
 
-.neplan-locations-icon svg {
+.transformer-locations-icon svg {
     width: 22px;
     height: 22px;
     fill: #fff;
@@ -1175,7 +1175,7 @@
 }
 
 /* Title */
-.neplan-locations-title {
+.transformer-locations-title {
     margin: 0;
     font-size: clamp(1.05rem, 1.7vw, 1.25rem);
     font-weight: 900;
@@ -1184,27 +1184,27 @@
 }
 
 /* Body text */
-.neplan-locations-phone,
-.neplan-locations-email,
-.neplan-locations-address {
+.transformer-locations-phone,
+.transformer-locations-email,
+.transformer-locations-address {
     margin: .15rem 0;
     color: var(--nl-text);
     line-height: 1.55;
 }
 
-.neplan-locations-email a {
+.transformer-locations-email a {
     color: var(--nl-primary-2);
     text-decoration: none;
     border-bottom: 1px solid rgba(21, 94, 117, .28);
 }
 
-.neplan-locations-email a:hover {
+.transformer-locations-email a:hover {
     border-color: transparent;
     text-decoration: underline;
 }
 
 /* Map button */
-.neplan-locations-map {
+.transformer-locations-map {
     margin-top: .5rem;
     align-self: flex-start;
     display: inline-flex;
@@ -1222,50 +1222,50 @@
     transition: transform .22s ease, box-shadow .22s ease, background .22s ease, border-color .22s ease;
 }
 
-.neplan-locations-map:hover {
+.transformer-locations-map:hover {
     transform: translateY(-2px);
     background: var(--nl-hover);
     border-color: var(--nl-hover);
 }
 
-.neplan-locations-map:active {
+.transformer-locations-map:active {
     transform: none;
     background: var(--nl-active);
     border-color: var(--nl-active);
 }
 
 /* Subtle separators inside card (optional) */
-.neplan-locations-card p+p {
+.transformer-locations-card p+p {
     border-top: 1px dashed var(--nl-ring);
     padding-top: .5rem;
 }
 
 /* Variant accents (optional) */
-.neplan-locations-card--au .neplan-locations-icon {
+.transformer-locations-card--au .transformer-locations-icon {
     background: linear-gradient(135deg, #1e40af, #0ea5e9);
 }
 
-.neplan-locations-card--in .neplan-locations-icon {
+.transformer-locations-card--in .transformer-locations-icon {
     background: linear-gradient(135deg, #a16207, #f59e0b);
 }
 
-.neplan-locations-card--fj .neplan-locations-icon {
+.transformer-locations-card--fj .transformer-locations-icon {
     background: linear-gradient(135deg, #047857, #10b981);
 }
 
 /* Accessibility: reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .neplan-locations-card {
+    .transformer-locations-card {
         transition: none;
     }
 
-    .neplan-locations-map {
+    .transformer-locations-map {
         transition: none;
     }
 }
 
 /* Center the locations section and cap width at 1400px */
-.neplan-locations-wrap {
+.transformer-locations-wrap {
     width: min(100%, 1220px);
     max-width: 1220px;
     /* hard cap */
@@ -1280,13 +1280,13 @@
 
 /* (optional) if you previously used justify-items/align-items here,
    move them to the grid container instead */
-.neplan-locations-grid {
+.transformer-locations-grid {
     justify-items: stretch;
     align-items: stretch;
 }
 
 /* =========================================
-   NEPLAN — Advantages (7)
+   transformer — Advantages (7)
    ========================================= */
 :root {
     --adv7-primary: #0f766e;
@@ -1298,19 +1298,19 @@
     --adv7-shadow: 0 18px 44px rgba(2, 8, 23, .10);
 }
 
-.section-neplan-advantages-seven {
+.section-transformer-advantages-seven {
     padding: clamp(28px, 3vw, 72px) 16px;
     background: #fff;
     color: var(--adv7-text);
 }
 
-.container-neplan-advantages-seven {
+.container-transformer-advantages-seven {
     width: min(100%, 1120px);
     margin-inline: auto;
 }
 
 /* Header */
-.eyebrow-neplan-advantages-seven {
+.eyebrow-transformer-advantages-seven {
     display: inline-flex;
     gap: .5rem;
     align-items: center;
@@ -1320,7 +1320,7 @@
     margin: 0 0 .5rem;
 }
 
-.eyebrow-neplan-advantages-seven::before {
+.eyebrow-transformer-advantages-seven::before {
     content: "";
     width: 28px;
     height: 3px;
@@ -1328,26 +1328,26 @@
     background: linear-gradient(90deg, var(--adv7-primary), var(--adv7-primary2));
 }
 
-.title-neplan-advantages-seven {
+.title-transformer-advantages-seven {
     margin: 0 0 .6rem;
     font-size: clamp(1.6rem, 4.6vw, 2.4rem);
     font-weight: 900;
     line-height: 1.15;
 }
 
-.intro-neplan-advantages-seven {
+.intro-transformer-advantages-seven {
     margin: 0 0 1.2rem;
     color: var(--adv7-muted);
     line-height: 1.7;
 }
 
-.intro-neplan-advantages-seven a {
+.intro-transformer-advantages-seven a {
     color: var(--adv7-primary2);
     font-weight: 700;
 }
 
 /* Grid of cards */
-.adv-grid-neplan-advantages-seven {
+.adv-grid-transformer-advantages-seven {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -1357,19 +1357,19 @@
 }
 
 @media (max-width: 1000px) {
-    .adv-grid-neplan-advantages-seven {
+    .adv-grid-transformer-advantages-seven {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 620px) {
-    .adv-grid-neplan-advantages-seven {
+    .adv-grid-transformer-advantages-seven {
         grid-template-columns: 1fr;
     }
 }
 
 /* Card */
-.adv-card-neplan-advantages-seven {
+.adv-card-transformer-advantages-seven {
     background: linear-gradient(180deg, #fff, var(--adv7-soft));
     border: 1px solid var(--adv7-ring);
     border-radius: 16px;
@@ -1382,7 +1382,7 @@
     animation: adv7-fadeUp .7s cubic-bezier(.22, 1, .36, 1) forwards;
 }
 
-.adv-card-neplan-advantages-seven::before {
+.adv-card-transformer-advantages-seven::before {
     content: "";
     position: absolute;
     left: 0;
@@ -1393,31 +1393,31 @@
 }
 
 /* Stagger */
-.adv-card-neplan-advantages-seven:nth-child(1) {
+.adv-card-transformer-advantages-seven:nth-child(1) {
     animation-delay: .02s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(2) {
+.adv-card-transformer-advantages-seven:nth-child(2) {
     animation-delay: .10s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(3) {
+.adv-card-transformer-advantages-seven:nth-child(3) {
     animation-delay: .18s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(4) {
+.adv-card-transformer-advantages-seven:nth-child(4) {
     animation-delay: .26s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(5) {
+.adv-card-transformer-advantages-seven:nth-child(5) {
     animation-delay: .34s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(6) {
+.adv-card-transformer-advantages-seven:nth-child(6) {
     animation-delay: .42s;
 }
 
-.adv-card-neplan-advantages-seven:nth-child(7) {
+.adv-card-transformer-advantages-seven:nth-child(7) {
     animation-delay: .50s;
 }
 
@@ -1439,14 +1439,14 @@
 }
 
 /* inside card */
-.adv-top-neplan-advantages-seven {
+.adv-top-transformer-advantages-seven {
     display: flex;
     align-items: center;
     gap: .6rem;
     margin-bottom: .35rem;
 }
 
-.adv-num-neplan-advantages-seven {
+.adv-num-transformer-advantages-seven {
     width: 38px;
     height: 38px;
     border-radius: 10px;
@@ -1458,33 +1458,33 @@
     box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .5);
 }
 
-.adv-head-neplan-advantages-seven {
+.adv-head-transformer-advantages-seven {
     margin: 0;
     font-size: clamp(1.02rem, 1.6vw, 1.22rem);
     font-weight: 900;
 }
 
-.adv-card-neplan-advantages-seven p {
+.adv-card-transformer-advantages-seven p {
     margin: 0;
     line-height: 1.65;
     color: var(--adv7-muted);
 }
 
-.adv-card-neplan-advantages-seven a {
+.adv-card-transformer-advantages-seven a {
     color: var(--adv7-primary2);
     font-weight: 700;
     text-decoration: none;
     border-bottom: 1px solid rgba(21, 94, 117, .28);
 }
 
-.adv-card-neplan-advantages-seven a:hover {
+.adv-card-transformer-advantages-seven a:hover {
     border-color: transparent;
     text-decoration: underline;
 }
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-    .adv-card-neplan-advantages-seven {
+    .adv-card-transformer-advantages-seven {
         animation: none;
         opacity: 1;
         transform: none;
@@ -1496,16 +1496,16 @@
 
 /* Desktop (3 columns): put #7 in the middle column */
 @media (min-width: 1001px){
-  .adv-grid-neplan-advantages-seven
-  > .adv-card-neplan-advantages-seven:nth-child(7){
+  .adv-grid-transformer-advantages-seven
+  > .adv-card-transformer-advantages-seven:nth-child(7){
     grid-column: 2;               /* middle column */
   }
 }
 
 /* Tablet (2 columns): make #7 span both and center it */
 @media (max-width: 1000px) and (min-width: 621px){
-  .adv-grid-neplan-advantages-seven
-  > .adv-card-neplan-advantages-seven:nth-child(7){
+  .adv-grid-transformer-advantages-seven
+  > .adv-card-transformer-advantages-seven:nth-child(7){
     grid-column: 1 / -1;          /* span both columns */
     justify-self: center;         /* center within the row */
     max-width: clamp(420px, 70%, 620px);

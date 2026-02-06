@@ -206,18 +206,18 @@ const COUNTRIES = [
 
   // ---------------- toast ----------------
   function showToast(msg, type = "error", timeoutMs = 4000) {
-    const root = document.getElementById("cmmsToastRoot");
+    const root = document.getElementById("transformerToastRoot");
     if (!root) return;
 
     const el = document.createElement("div");
-    el.className = "cmms-toast " + (type === "ok" ? "cmms-toast--ok" : "cmms-toast--error");
+    el.className = "transformer-toast " + (type === "ok" ? "transformer-toast--ok" : "transformer-toast--error");
     el.innerHTML = `<span aria-hidden="true">${type === "ok" ? "✔️" : "⚠️"}</span>
                     <div>${msg}</div>
-                    <button class="cmms-toast__close" aria-label="Close">×</button>`;
+                    <button class="transformer-toast__close" aria-label="Close">×</button>`;
     root.appendChild(el);
 
     const remove = () => el.remove();
-    el.querySelector(".cmms-toast__close").addEventListener("click", remove);
+    el.querySelector(".transformer-toast__close").addEventListener("click", remove);
     setTimeout(remove, timeoutMs);
   }
 
