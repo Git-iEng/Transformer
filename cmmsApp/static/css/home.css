@@ -2842,3 +2842,34 @@ section[id]{ scroll-margin-top: var(--header-h-solar); }
   }
 }
 
+
+
+.transformer-body {
+  padding: 18px 20px 22px;
+}
+
+.transformer-body h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--lv-ink);
+}
+
+.transformer-body p {
+  margin: 7px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--lv-muted);
+}
+
+.transformer-body strong {
+  color: var(--lv-ink);
+}
+
+
+
+
+
+
+
+

@@ -77,7 +77,7 @@ function smoothScrollTo(targetSelector) {
 })();
 
 /* ==========================================================
-   Logos pager (dots) + continuous marquee coexist (robust)
+   continuous marquee coexist
    ========================================================== */
 (function initLogosPager() {
   const wrap = document.querySelector('.logos-wrap-transformer');
