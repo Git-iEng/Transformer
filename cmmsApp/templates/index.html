@@ -27,7 +27,21 @@
   <link rel="stylesheet" href="{% static 'css/footer.css' %}">
   <script defer src="{% static 'js/main.js' %}"></script>
 
+<script>
+  document.addEventListener("click", function (e) {
+    const btn = e.target.closest("#transformerProjectToggle");
+    if (!btn) return;
 
+    const extraProject = document.querySelector(".transformer-project-extra");
+    if (!extraProject) return;
+
+    const isOpen = extraProject.style.display === "block";
+
+    extraProject.style.display = isOpen ? "none" : "block";
+    btn.textContent = isOpen ? "More Projects" : "Show Less";
+    btn.setAttribute("aria-expanded", isOpen ? "false" : "true");
+  });
+</script>
 </head>
 
 <body>
@@ -369,33 +383,33 @@
       <article class="transformer-card reveal-right is-visible">
         <figure class="transformer-media">
           <img src="{% static 'images/projects/p2.avif' %}" alt="200 kVA Transformer Nauru" />
-          <span class="transformer-year">Nauru 2024</span>
+          <span class="transformer-year">2024</span>
         </figure>
         <div class="transformer-body">
           <h3>200 kVA Transformer</h3>
-          <p><strong>Project:</strong> Supply of 150 & 200 kVA Transformers</p>
+          <p><strong>Project:</strong> Supply of 150 Transformers</p>
           <p><strong>Location:</strong> Nauru</p>
-          <p><strong>Scope of Work:</strong> Supply of 3 x 150 kVA and 3 x 200 kVA transformers to utility.</p>
+          <p><strong>Scope of Work:</strong> Supply of 3 x 150 kVA transformers to utility.</p>
         </div>
       </article>
 
       <article class="transformer-card reveal-left is-visible">
         <figure class="transformer-media">
           <img src="{% static 'images/projects/p3.avif' %}" alt="150 kVA Transformer Nauru" />
-          <span class="transformer-year">Nauru 2024</span>
+          <span class="transformer-year">2024</span>
         </figure>
         <div class="transformer-body">
           <h3>150 kVA Transformer</h3>
-          <p><strong>Project:</strong> Supply of 150 & 200 kVA Transformers</p>
+          <p><strong>Project:</strong> Supply of 200 kVA Transformers</p>
           <p><strong>Location:</strong> Nauru</p>
-          <p><strong>Scope of Work:</strong> Supply of 3 x 150 kVA and 3 x 200 kVA transformers to utility.</p>
+          <p><strong>Scope of Work:</strong> Supply of 3 x 200 kVA transformers to utility.</p>
         </div>
       </article>
 
       <article class="transformer-card reveal-left is-visible">
         <figure class="transformer-media">
           <img src="{% static 'images/projects/p1.avif' %}" alt="1500 kVA Transformer Fiji" />
-          <span class="transformer-year">Fiji 2023</span>
+          <span class="transformer-year">2023</span>
         </figure>
         <div class="transformer-body">
           <h3>1500 kVA Transformer</h3>
@@ -405,21 +419,26 @@
         </div>
       </article>
 
-      <article class="transformer-card reveal-right is-visible">
+      <article class="transformer-card reveal-right is-visible transformer-project-extra">
   <figure class="transformer-media">
     <img src="{% static 'images/pro4.png' %}" alt="Supply of 100 200 1250 kVA Transformers Fiji" />
-    <span class="transformer-year">Fiji 2018-2019</span>
+    <span class="transformer-year">2018-2019</span>
   </figure>
   <div class="transformer-body">
     <h3>Supply of 100, 200, 1250 kVA Transformers</h3>
-    <p><strong>Project:</strong> Fiji Supply of 100, 200, 1250 kVA Transformers</p>
-    <p><strong>Location:</strong> Fiji</p>
+    <p><strong>Project:</strong>Supply of 100, 200, 1250 kVA Transformers</p>
+    <p><strong>Location:</strong> Solomon Island</p>
     <p><strong>Scope of Work:</strong> Supply of WILSON Make 2 x 100 kVA, 6 x 200 kVA, and 1 x 1250 kVA transformers.</p>
   </div>
 </article>
 
     </div>
   </div>
+  <div class="transformer-project-more-wrap">
+ <button type="button" id="transformerProjectToggle" class="transformer-project-more-btn" aria-expanded="false">
+  More Projects
+</button>
+</div>
 </section>
 
   <section id="about-us" class="cmms-contact-form-wrap">
@@ -432,9 +451,6 @@
       <h2 class="title-meet-ieng-about reveal-up">
         About us – where vision meets execution!
       </h2>
-
-
-
       <p class="about-text-abou-ieng reveal-up">
         iEngineering is your trusted partner for advanced electrical and energy solutions across Australia, Fiji, and India. We deliver high-quality hardware products   from switchboards and transformers to solar, BESS, Transformer and EV charging systems   backed by expert engineering, reliable installation, and dedicated local support.</strong>
       </p>

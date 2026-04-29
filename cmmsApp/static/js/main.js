@@ -1256,3 +1256,25 @@ document.addEventListener("DOMContentLoaded", () => {
   goTo(0, false);
   start();
 })();
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const btn = document.getElementById('transformerProjectToggle');
+  const extraProject = document.querySelector('.transformer-project-extra');
+
+  if (!btn || !extraProject) return;
+
+  btn.addEventListener('click', function () {
+    const isOpen = extraProject.classList.contains('is-project-visible');
+
+    if (isOpen) {
+      extraProject.classList.remove('is-project-visible');
+      btn.textContent = 'More Projects';
+      btn.setAttribute('aria-expanded', 'false');
+    } else {
+      extraProject.classList.add('is-project-visible');
+      btn.textContent = 'Show Less';
+      btn.setAttribute('aria-expanded', 'true');
+    }
+  });
+});
